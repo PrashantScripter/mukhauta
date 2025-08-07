@@ -25,24 +25,41 @@ import {
   Menu,
   Rss,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="flex flex-row cursor-pointer z-50 justify-between items-center p-4 lg:px-10 fixed top-0 w-dvw backdrop-blur-xl bg-black/20">
+    <header className="flex flex-row cursor-pointer z-50 justify-between items-center p-4 lg:px-10 fixed top-0 w-dvw backdrop-blur-xl">
       <div className="flex flex-row gap-2 items-center">
         {/* <Drama className="size-10 text-white" /> */}
-        <div className="text-4xl">🎭</div>
-        <span className="font-bold text-2xl text-yellow-400 hidden sm:flex">Mukhauta</span>
+        <Link to={"/"} className="flex flex-row gap-4 items-center">
+          <span className="text-4xl">🎭</span>
+          <span className="font-bold text-2xl text-yellow-400 hidden sm:flex">
+            Mukhauta
+          </span>
+        </Link>
       </div>
 
       <div className="hidden lg:flex">
         <ul className="flex flex-row gap-6">
-          <li className="text-white font-medium">Gallery</li>
-          <li className="text-white font-medium">Blogs</li>
-          <li className="text-white font-medium">Notices</li>
-          <li className="text-white font-medium">Team</li>
-          <li className="text-white font-medium">About us</li>
-          <li className="text-white font-medium">Contact us</li>
+          <li className="text-white font-medium">
+            <Link to={"/gallery"}>Gallery</Link>
+          </li>
+          <li className="text-white font-medium">
+            <Link to={"/blog"}>Blogs</Link>
+          </li>
+          <li className="text-white font-medium">
+            <Link to={"/notices"}>Notices</Link>
+          </li>
+          <li className="text-white font-medium">
+            <Link to={"/team"}>Team</Link>
+          </li>
+          <li className="text-white font-medium">
+            <a href="#about">About</a>
+          </li>
+          <li className="text-white font-medium">
+            <a href="#contact">Contact</a>
+          </li>
         </ul>
       </div>
       <div>

@@ -1,18 +1,12 @@
 // HeroSlideshow.jsx
 import React, { useState, useEffect } from "react";
-import mukhota1 from "../../assets/mukhota1.jpg"
-import mukhota2 from "../../assets/mukhota2.jpg"
-import mukhota3 from "../../assets/mukhota3.jpg"
-import mukhota4 from "../../assets/mukhota4.jpg"
-import mukhota5 from "../../assets/mukhota5.jpg"
+import mukhota1 from "../../assets/mukhota1.jpg";
+import mukhota2 from "../../assets/mukhota2.jpg";
+import mukhota3 from "../../assets/mukhota3.jpg";
+import mukhota4 from "../../assets/mukhota4.jpg";
+import mukhota5 from "../../assets/mukhota5.jpg";
 
-const images = [
-    mukhota1,
-    mukhota2,
-    mukhota3,
-    mukhota4,
-    mukhota5
-];
+const images = [mukhota1, mukhota2, mukhota3, mukhota4, mukhota5];
 
 export default function HeroSlideshow({ children, height = "h-dvh" }) {
   const [current, setCurrent] = useState(0);
@@ -38,7 +32,7 @@ export default function HeroSlideshow({ children, height = "h-dvh" }) {
         />
       ))}
 
-      <div className="absolute inset-0 bg-black opacity-60" />
+      <div className="absolute inset-0 bg-black/60" />
 
       {/* Content container */}
       <div className="relative z-10 flex items-center justify-center h-full px-4 text-center">

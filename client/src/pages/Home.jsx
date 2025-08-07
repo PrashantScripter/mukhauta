@@ -1,5 +1,7 @@
+import ContactSection from "@/components/ui/Contact";
 import HeroSlideshow from "@/components/ui/HeroSlideShow";
-import { Lightbulb, Sparkles } from "lucide-react";
+import TeamSection from "@/components/ui/TeamSection";
+import { Lightbulb, Sparkles, Users } from "lucide-react";
 import React from "react";
 
 const Home = () => {
@@ -20,7 +22,7 @@ const Home = () => {
       </HeroSlideshow>
 
       {/* animated right to left text travel animation with tag line */}
-      <div className="relative overflow-hidden bg-black py-4">
+      <div className="relative overflow-hidden bg-zinc-950 py-4">
         {/* Gradient masks */}
         <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-black to-transparent z-10" />
         <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-black to-transparent z-10" />
@@ -80,20 +82,16 @@ const Home = () => {
         </style>
       </div>
 
-      <section className="relative py-20 bg-black text-white">
-        {/* Background overlay */}
-        <div
-          className="absolute inset-0 bg-[url('/images/stage-bg.jpg')] bg-cover bg-center"
-          style={{ opacity: 0.2 }}
-        ></div>
-        <div className="absolute inset-0 bg-black/50"></div>
-
+      {/* vision section */}
+      <section className=" py-20 bg-black text-white">
         {/* Content */}
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-6">
             <Lightbulb className="w-10 h-10 text-yellow-400" />
           </div>
-          <h2 className="text-4xl lg:text-6xl font-bold mb-4">Our Vision</h2>
+          <h2 className="text-4xl lg:text-6xl font-bold mb-4 flex flex-row gap-4 justify-center">
+            Our <span className="text-yellow-500">Vision</span>
+          </h2>
           <p className="text-lg text-gray-200 leading-relaxed">
             We aim to nurture creativity and passion for the performing arts by
             providing a platform for students to explore, express, and excel in
@@ -106,6 +104,68 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* About us */}
+      <section className="bg-black py-16 px-6 md:px-20 text-center " id="about">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="flex flex-row gap-4 items-center font-bold text-4xl lg:text-6xl text-white mb-6 justify-center">
+            <span className="text-yellow-500">About</span> Us
+          </h2>
+
+          <p className="text-lg text-white leading-relaxed mb-6">
+            <strong>Mukhauta</strong> is the official drama society of{" "}
+            <strong>J.B KNOWLEDGE PARK</strong>, bringing stories to life
+            through stage and street performances since <strong>2019</strong>.
+            We are a collective of passionate artists—actors, writers,
+            directors, and backstage magicians—who believe in the power of
+            expression.
+          </p>
+
+          <p className="text-lg text-white leading-relaxed mb-6">
+            From energetic street plays that spark conversations to immersive
+            stage productions that move hearts, our performances aim to
+            entertain, enlighten, and engage. We also host acting workshops,
+            scriptwriting sessions, and open mics to keep our creative fire
+            alive.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 text-left">
+            <div className="bg-gradient-to-bl from-black to-red-800 border border-yellow-500 p-6 rounded-xl shadow hover:scale-105 transition">
+              <h3 className="text-xl font-semibold text-yellow-500 mb-2">
+                🎭 Stage Plays
+              </h3>
+              <p className="text-white">
+                Performing dramas, tragedies, comedies, and experimental theatre
+                on campus and beyond.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-tr from-black to-red-800 border border-yellow-500 p-6 rounded-xl shadow hover:scale-105 transition">
+              <h3 className="text-xl font-semibold text-yellow-500 mb-2">
+                📣 Street Performances
+              </h3>
+              <p className="text-white">
+                Spreading social awareness and provoking thought through
+                impactful nukkad natak performances.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-black to-red-800 border border-yellow-500 p-6 rounded-xl shadow hover:scale-105 transition">
+              <h3 className="text-xl font-semibold text-yellow-500 mb-2">
+                🧠 Creative Workshops
+              </h3>
+              <p className="text-white">
+                Training the next generation of storytellers through regular
+                acting, writing, and direction workshops.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <TeamSection />
+
+      <ContactSection />
     </div>
   );
 };
