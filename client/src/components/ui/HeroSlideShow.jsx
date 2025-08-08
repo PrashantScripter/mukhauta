@@ -32,7 +32,10 @@ export default function HeroSlideshow({ children, height = "h-dvh" }) {
         />
       ))}
 
-      <div className="absolute inset-0 bg-black/60" />
+      {/* <div className="absolute inset-0 bg-black/70" /> */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-l from-black/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
       {/* Content container */}
       <div className="relative z-10 flex items-center justify-center h-full px-4 text-center">

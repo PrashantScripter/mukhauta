@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Left: Logo & About */}
         <div>
-          <h2 className="flex flex-row items-center gap-4 text-2xl font-bold text-yellow-400 mb-4">
+          <h2 className="flex flex-row items-center gap-2 text-2xl text-yellow-400 mb-4">
             <span>🎭</span>
             Mukhauta
           </h2>

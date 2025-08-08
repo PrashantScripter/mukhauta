@@ -3,33 +3,40 @@ import HeroSlideshow from "@/components/ui/HeroSlideShow";
 import TeamSection from "@/components/ui/TeamSection";
 import { Lightbulb, Sparkles, Users } from "lucide-react";
 import React from "react";
+import { MdOutlineExplore } from "react-icons/md";
+
 
 const Home = () => {
   return (
     <div className="">
       <HeroSlideshow height={"h-dvh"}>
-        <div className="">
-          <h1 className="text-4xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
-            Welcome to Mukhauta
+        <div className="flex flex-col gap-4">
+          <h1 className="relative text-4xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
+            Welcome to{" "}
+            <span className="text-yellow-500 font-bold">Mukhauta</span>
+            <span className="absolute text-white text-sm -bottom-4 right-0 font-medium">
+              A drama society...
+            </span>
           </h1>
-          <p className="text-lg sm:text-2xl text-white">
+          <p className="text-lg sm:text-2xl font-semibold text-white">
             Where every story comes alive on stage.
           </p>
-          <button className="mt-6 px-4 py-2 cursor-pointer border border-white text-white font-bold rounded hover:bg-white hover:text-black transition">
-            Join Us
-          </button>
+          <a
+            href="#vision"
+            className="flex flex-row gap-2 items-center font-medium px-4 py-2 w-fit m-auto cursor-pointer border border-white text-white rounded hover:bg-white hover:text-black transition"
+          >
+            <MdOutlineExplore size={20} />
+            Explore community
+          </a>
         </div>
       </HeroSlideshow>
 
       {/* animated right to left text travel animation with tag line */}
       <div className="relative overflow-hidden bg-zinc-950 py-4">
-        {/* Gradient masks */}
         <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-black to-transparent z-10" />
         <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-black to-transparent z-10" />
 
-        {/* Marquee container */}
         <div className="flex whitespace-nowrap animate-marquee">
-          {/* Content repeated twice inside */}
           <div className="flex">
             <span className="mx-8 text-sm font-medium text-white">
               Where every stage tells a story.
@@ -83,7 +90,7 @@ const Home = () => {
       </div>
 
       {/* vision section */}
-      <section className=" py-20 bg-black text-white">
+      <section className=" py-20 bg-black text-white" id="vision">
         {/* Content */}
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-6">

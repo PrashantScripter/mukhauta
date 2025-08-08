@@ -10,7 +10,7 @@ export default function Loader() {
       {/* Mask animation */}
       <div className="relative flex flex-col items-center">
         <div className="text-6xl animate-bounce">🎭</div>
-        <p className="mt-4 text-lg font-semibold tracking-wide animate-pulse">
+        <p className="mt-4 text-lg tracking-wide animate-pulse">
           Bringing the stage to life...
         </p>
       </div>
