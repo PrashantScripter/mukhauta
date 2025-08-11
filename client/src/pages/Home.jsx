@@ -100,11 +100,15 @@ const Home = () => {
             Our <span className="text-yellow-500">Vision</span>
           </h2>
           <p className="text-lg text-gray-200 leading-relaxed">
-            We aim to nurture creativity and passion for the performing arts by
-            providing a platform for students to explore, express, and excel in
-            theatre. Through our productions, workshops, and cultural exchanges,
-            we strive to inspire storytelling that resonates with audiences and
-            celebrates the art of drama.
+            Our vision is to ignite a deep passion for theatre and the
+            performing arts within our college community. We aim to create a
+            space where creativity thrives, and every voice finds expression on
+            stage. By making theatre accessible to all regardless of experience,
+            we nurture talent, build confidence, and inspire artistic
+            exploration. We believe in the transformative power of performance
+            to connect, challenge, and uplift. Through inclusive and dynamic
+            storytelling, we strive to empower performers of all levels to
+            discover their potential.
           </p>
           <div className="flex justify-center mt-6">
             <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />

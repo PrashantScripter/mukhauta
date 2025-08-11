@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -31,23 +32,29 @@ const Footer = () => {
               </a>
             </li>
             <li>
-              <a href="#events" className="hover:text-yellow-400 transition">
-                Upcoming Events
-              </a>
+              <Link
+                to={"/notices"}
+                className="hover:text-yellow-400 transition"
+              >
+                Notices
+              </Link>
             </li>
             <li>
-              <a href="#gallery" className="hover:text-yellow-400 transition">
+              <Link
+                to={"/gallery"}
+                className="hover:text-yellow-400 transition"
+              >
                 Gallery
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#team" className="hover:text-yellow-400 transition">
+              <Link to={"/team"} className="hover:text-yellow-400 transition">
                 Our Team
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#join" className="hover:text-yellow-400 transition">
-                Join Us
+              <a href="#contact" className="hover:text-yellow-400 transition">
+                Contact Us
               </a>
             </li>
           </ul>
@@ -61,11 +68,15 @@ const Footer = () => {
           <ul className="space-y-3 text-sm text-gray-300">
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-yellow-400" />
-              drama@mukhauta.org
+              mukhautadramaticsociety@gmail.com
             </li>
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-yellow-400" />
-              +91-98765-43210
+              +91-7065779744
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-yellow-400" />
+              +91-8800935448
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="w-10 h-10 text-yellow-400" />
@@ -76,18 +87,11 @@ const Footer = () => {
 
           <div className="flex gap-4 mt-4">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/mukhauta_dramatic_society_/"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Instagram className="w-5 h-5 text-white hover:text-yellow-400 transition" />
-            </a>
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Facebook className="w-5 h-5 text-white hover:text-yellow-400 transition" />
             </a>
           </div>
         </div>
