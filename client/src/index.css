@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -123,4 +124,13 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.logo-style{
+  font-family: "Edu NSW ACT Cursive", cursive;
+}
+
+.custom-date-icon::-webkit-calendar-picker-indicator {
+  filter: invert(74%) sepia(72%) saturate(565%) hue-rotate(359deg) brightness(96%) contrast(92%);
+  cursor: pointer;
 }

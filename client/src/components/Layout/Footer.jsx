@@ -1,8 +1,9 @@
 // components/Footer.jsx
 
 import React from "react";
-import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, MapPin, Copyright } from "lucide-react";
 import { Link } from "react-router-dom";
+
 
 const Footer = () => {
   return (
@@ -10,10 +11,16 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Left: Logo & About */}
         <div>
-          <h2 className="flex flex-row items-center gap-2 text-2xl text-yellow-400 mb-4">
-            <span>🎭</span>
-            Mukhauta
-          </h2>
+          <div className="flex flex-row items-center  gap-2 text-2xl text-yellow-400 mb-4">
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <img
+                src="./Mukhota-logo.png"
+                alt="logo"
+                className="w-full h-full object-fit"
+              />
+            </div>
+            <span className="text-yellow-500 text-xl logo-style">Mukhauta</span>
+          </div>
           <p className="text-sm text-gray-300">
             The official drama society of J.B KNOWLEDGE. We bring stories to
             life through passion, performance, and purpose.
@@ -22,7 +29,7 @@ const Footer = () => {
 
         {/* Middle: Navigation */}
         <div>
-          <h3 className="text-xl font-semibold text-yellow-300 mb-4">
+          <h3 className="text-xl font-semibold text-yellow-500 mb-4">
             Quick Links
           </h3>
           <ul className="space-y-2 text-sm text-gray-300">
@@ -62,7 +69,7 @@ const Footer = () => {
 
         {/* Right: Contact & Social */}
         <div className="flex flex-col">
-          <h3 className="text-xl font-semibold text-yellow-300 mb-4">
+          <h3 className="text-xl font-semibold text-yellow-500 mb-4">
             Contact
           </h3>
           <ul className="space-y-3 text-sm text-gray-300">
@@ -98,8 +105,16 @@ const Footer = () => {
       </div>
 
       {/* Bottom Line */}
-      <div className="text-center text-white/80 text-sm mt-12 border-t border-yellow-500/20 pt-6">
-        © {new Date().getFullYear()} Mukhauta. All rights reserved.
+      <div className="flex flex-row items-center justify-center gap-2 text-center text-white/80 text-xs sm:text-sm mt-12 border-t border-yellow-500/20 pt-6">
+        <Copyright size={15} /> {new Date().getFullYear()} Mukhauta - Developed
+        by{" "}
+        <a
+          href="https://code-catalyst.pages.dev/"
+          target="_blank"
+          className="hover:underline underline-offset-4 text-yellow-500"
+        >
+          Code Catalyst
+        </a>
       </div>
     </footer>
   );

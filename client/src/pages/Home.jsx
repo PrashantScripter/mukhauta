@@ -11,11 +11,13 @@ const Home = () => {
     <div className="">
       <HeroSlideshow height={"h-dvh"}>
         <div className="flex flex-col gap-4">
-          <h1 className="relative text-4xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
+          <h1 className=" text-4xl sm:text-4xl md:text-7xl font-bold text-white mb-4">
             Welcome to{" "}
-            <span className="text-yellow-500 font-bold">Mukhauta</span>
-            <span className="absolute text-white text-sm -bottom-4 right-0 font-medium">
-              A drama society...
+            <span className="relative text-yellow-500 font-bold">
+              Mukhauta
+              <span className="absolute text-white text-sm -bottom-4 sm:-bottom-2 right-0 font-medium">
+                A drama society...
+              </span>
             </span>
           </h1>
           <p className="text-lg sm:text-2xl font-semibold text-white">

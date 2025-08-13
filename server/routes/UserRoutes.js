@@ -1,17 +1,24 @@
 // routes/UserRoutes.js
+import { PrismaClient } from "@prisma/client"
 import express from "express";
 import nodemailer from "nodemailer";
+import upload from "../middleware/upload.js";
+
+const prisma = new PrismaClient();
 const router = express.Router();
 
+// -------------------- Nodemailer Setup --------------------
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-// Helpful: verify transporter at startup, logs if auth fails
-transporter.verify((err, success) => {
+transporter.verify((err) => {
   if (err) {
     console.error("Nodemailer transporter verification failed:", err);
   } else {
@@ -19,16 +26,14 @@ transporter.verify((err, success) => {
   }
 });
 
-// contact form submission
+// -------------------- Contact Form --------------------
 router.post("/contact", async (req, res) => {
   const { name, email, subject = "Contact Form", message } = req.body;
 
-  // Validate input
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // Build mail
   const mailOptions = {
     from: `"${name}" <${process.env.EMAIL_USER}>`,
     replyTo: email,
@@ -36,22 +41,139 @@ router.post("/contact", async (req, res) => {
     subject: subject,
     text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
     html: `<p><strong>Name:</strong> ${name}</p>
-         <p><strong>Email:</strong> ${email}</p>
-         <p><strong>Message:</strong></p>
-         <div>${String(message).replace(/\n/g, "<br>")}</div>`,
+           <p><strong>Email:</strong> ${email}</p>
+           <p><strong>Message:</strong></p>
+           <div>${String(message).replace(/\n/g, "<br>")}</div>`,
   };
 
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent:", info.messageId);
-    return res
-      .status(200)
-      .json({ message: "Email sent successfully", messageId: info.messageId });
+    return res.status(200).json({
+      message: "Email sent successfully",
+      messageId: info.messageId,
+    });
   } catch (error) {
     console.error("Error sending email:", error);
     return res.status(500).json({ error: "Failed to send email" });
   }
 });
 
+// -------------------- Create Team Member --------------------
+router.post("/create-member", upload.single("image"), async (req, res) => {
+  try {
+    const { name, role, description } = req.body;
+
+    let socialLinks = null; // Use null as default
+    if (req.body.socialLinks) {
+      try {
+        socialLinks = JSON.parse(req.body.socialLinks);
+      } catch {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid socialLinks JSON" });
+      }
+    }
+
+    const imageUrl = req.file?.path;
+    const imagePublicId = req.file?.filename;
+
+    const newMember = await prisma.teamMember.create({
+      data: {
+        name,
+        role,
+        description: description || null,
+        imageUrl,
+        imagePublicId,
+        socialLinks, // Store the object directly
+      },
+    });
+
+    res.json({ success: true, member: newMember });
+  } catch (error) {
+    console.error("Error creating team member:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// -------------------- Get All Members --------------------
+router.get("/all-members", async (req, res) => {
+  try {
+    const members = await prisma.teamMember.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(members);
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res.status(500).json({ message: "Failed to fetch members" });
+  }
+});
+
+// ------------------------- Update user detial ----------------
+
+router.put("/update-user/:id", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, role, description } = req.body;
+
+    let socialLinks = null;
+    if (req.body.socialLinks) {
+      try {
+        socialLinks = JSON.parse(req.body.socialLinks);
+      } catch {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid socialLinks JSON" });
+      }
+    }
+
+    const imageUrl = req.file?.path;
+    const imagePublicId = req.file?.filename;
+
+    const updatedMember = await prisma.teamMember.update({
+      where: { id: parseInt(id) },
+      data: {
+        name,
+        role,
+        description: description || null,
+        ...(imageUrl && { imageUrl }),
+        ...(imagePublicId && { imagePublicId }),
+        socialLinks,
+      },
+    });
+
+    res.json({ success: true, member: updatedMember });
+  } catch (error) {
+    console.error("Error updating team member:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
+// -------------------- Delete Team Member --------------------
+router.delete("/delete-user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if the team member exists
+    const member = await prisma.teamMember.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!member) {
+      return res.status(404).json({ success: false, message: "Team member not found" });
+    }
+
+    // Delete the team member
+    await prisma.teamMember.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.json({ success: true, message: "Team member deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting team member:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 export default router;

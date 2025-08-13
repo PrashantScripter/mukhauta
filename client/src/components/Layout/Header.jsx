@@ -34,11 +34,16 @@ const Header = () => {
     <header className="flex flex-row cursor-pointer z-50 justify-between items-center p-4 lg:px-10 fixed top-0 w-dvw backdrop-blur-xl">
       <div className="flex flex-row gap-2 items-center">
         {/* <Drama className="size-10 text-white" /> */}
-        <Link to={"/"} className="flex flex-row gap-2 items-center">
-          <span className="text-4xl">🎭</span>
-          <span className="text-2xl text-yellow-400 hidden sm:flex">
-            Mukhauta
-          </span>
+        <Link to={"/"} className="flex flex-row gap-2 items-center ">
+          {/* <span className="text-4xl">🎭</span> */}
+          <div className="w-10 h-10 rounded-full overflow-hidden">
+            <img
+              src="./Mukhota-logo.png"
+              alt="logo"
+              className="w-full h-full object-fit"
+            />
+          </div>
+          <span className="text-yellow-500 text-xl logo-style">Mukhauta</span>
         </Link>
       </div>
 
@@ -73,6 +78,11 @@ const Header = () => {
             Contact
             <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
           </a>
+
+          <Link to={"/admin"} className="relative text-white group">
+            Admin
+            <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
+          </Link>
         </div>
       </div>
       <div>

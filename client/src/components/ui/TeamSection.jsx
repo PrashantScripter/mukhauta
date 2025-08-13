@@ -45,6 +45,7 @@ const teamMembers = [
 ];
 
 const TeamSection = () => {
+  
   return (
     <section className="bg-black py-16 px-6 md:px-20" id="team">
       <div className="max-w-6xl mx-auto text-center">
