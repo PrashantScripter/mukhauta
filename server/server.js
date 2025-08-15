@@ -8,13 +8,23 @@ import AdminRoutes from "./routes/AdminRoutes.js"
 const app = express();
 const PORT = process.env.PORT || 5000; // match frontend's 5000 or change frontend to match this
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
+app.get("/", (req, res) => {
+  res.send("Working..");
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
-
 
 
 app.listen(PORT, () => {
