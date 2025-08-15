@@ -1,76 +1,29 @@
+import axios from "axios";
 import { CircleX, Rss } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TfiWrite } from "react-icons/tfi";
 
-const blogs = [
-  {
-    id: 1,
-    title: "Behind the Curtain: A Look Into Our Rehearsals",
-    excerpt:
-      "Peek behind the scenes at how we prepare for our annual productions...",
-    content: `
-Rehearsals are where the magic begins long before the spotlight hits the stage. Every year, weeks before our major productions, our team enters a creative cocoon—one filled with energy, nerves, and endless possibilities.
-
-## The Warm-up Ritual
-
-Each session starts with our signature warm-up routine. From breathing exercises to vocal stretches, these rituals help cast members shake off the day's stress and ground themselves in the present moment.
-
-> "The stage demands your body and soul. Our warm-ups remind us we're more than performers—we're storytellers." — Aarav Kapoor
-
-## Blocking & Movement
-
-Blocking is more than just stage direction. It's choreography with emotion. Every step, every pause, is carefully placed to convey meaning and maintain audience engagement.
-
-- Actors rehearse their entrances and exits repeatedly.
-- Timing is adjusted with stage lighting to create emphasis.
-- Feedback is constant—directors and peers help shape each moment.
-
-## Building Chemistry
-
-Ensemble exercises help build trust and familiarity between cast members. Whether it's improv games or partner reflections, they foster the emotional glue needed to portray deep relationships on stage.
-
-## Rehearsing With Tech
-
-Our backstage team begins integrating sound cues, lighting effects, and set transitions halfway through rehearsals. This overlap ensures that performers and crew can sync their rhythms and deliver a seamless performance.
-
-## Final Thoughts
-
-Rehearsals are not just about memorizing lines. They’re about becoming the character, absorbing the narrative, and building something magical together. They’re where the cast becomes family, and where a story begins to breathe.
-
-The audience may only see the final act—but everything they feel begins here: behind the curtain.
-    `.trim(),
-    author: "Ananya Verma",
-    date: "2025-07-25",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmDpdESZq-3Wpj65-s4kbDNMSKFbW5eJUY2Q&s",
-  },
-  {
-    id: 2,
-    title: "The Power of Expression Through Stage",
-    excerpt:
-      "Acting is not just performance—it’s therapy, rebellion, and storytelling...",
-    content:
-      "Acting is not just performance—it’s therapy, rebellion, and storytelling. From our first-year students to our seniors, here’s how drama has become a safe space for emotional expression.",
-    author: "Rohan Mehta",
-    date: "2025-07-18",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFU7U2h0umyF0P6E_yhTX45sGgPEQAbGaJ4g&s",
-  },
-  {
-    id: 3,
-    title: "5 Tips to Overcome Stage Fear",
-    excerpt: "Stage fear is real—but beatable...",
-    content:
-      "Here are 5 real and practical tips that helped our members overcome stage fear: breathing control, mock rehearsals, backstage meditation, visualization, and confidence coaching.",
-    author: "Meera Shah",
-    date: "2025-07-10",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNAkB1j2W0ejEMyWFYmTpvMoKYCzy99XwD_Q&s",
-  },
-];
+const API = import.meta.env.VITE_SERVER_URL;
 
 const Blog = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      const res = await axios.get(`${API}/api/admin/all-blogs`);
+      if (res.data.success) {
+        setBlogs(res.data.data);
+        console.log(res);
+      }
+    } catch (err) {
+      console.error("Failed to load blogs:", err);
+    }
+  };
 
   return (
     <div className="bg-black min-h-screen pt-30 pb-20 px-6 md:px-20 text-white">
@@ -92,22 +45,18 @@ const Blog = () => {
             onClick={() => setSelectedBlog(blog)}
           >
             <img
-              src={blog.image}
+              src={blog.imageUrl}
               alt={blog.title}
               className="h-48 w-full object-cover"
             />
             <div className="p-6 space-y-3">
               <p className="text-sm text-yellow-400 font-medium">
-                {new Date(blog.date).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {new Date(blog.createdAt).toLocaleString()}
               </p>
               <h3 className="text-xl font-semibold hover:underline">
                 {blog.title}
               </h3>
-              <p className="text-gray-300 text-sm">{blog.excerpt}</p>
+              <p className="text-gray-300 text-sm line-clamp-3">{blog.content}</p>
               <p className="text-sm italic text-yellow-200 mt-2">
                 — {blog.author}
               </p>
@@ -127,18 +76,14 @@ const Blog = () => {
               <CircleX size={30} />
             </button>
             <img
-              src={selectedBlog.image}
+              src={selectedBlog.imageUrl}
               className="w-full h-60 object-cover rounded"
               alt={selectedBlog.title}
             />
             <h2 className="text-2xl font-bold mt-4">{selectedBlog.title}</h2>
             <p className="text-sm text-yellow-400 mb-2 whitespace-pre-wrap">
-              {new Date(selectedBlog.date).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}{" "}
-              | By {selectedBlog.author}
+              {new Date(selectedBlog.createdAt).toLocaleString()} | By{" "}
+              {selectedBlog.author}
             </p>
             <p className="text-gray-300 mt-4">{selectedBlog.content}</p>
           </div>

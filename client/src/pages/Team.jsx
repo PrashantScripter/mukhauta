@@ -18,7 +18,7 @@ const Team = () => {
     // setLoading(true);
     try {
       const res = await axios.get(`${API}/api/user/all-members`);
-      setTeamMembers(res.data);
+      setTeamMembers(res.data.members);
       console.log(teamMembers);
     } catch (err) {
       console.error("Failed to fetch team", err);
@@ -59,7 +59,7 @@ const Team = () => {
               <p className="text-sm text-yellow-600 font-medium mb-2">
                 {member.role}
               </p>
-              <p className="text-sm text-white/80 text-center mb-4">
+              <p className="text-sm text-white/80 text-center mb-4 line-clamp-3 w-full">
                 {member.description}
               </p>
 

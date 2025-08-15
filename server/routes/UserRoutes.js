@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client"
 import express from "express";
 import nodemailer from "nodemailer";
 import upload from "../middleware/upload.js";
+import cloudinary from "../config/cloudinary.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -89,7 +90,7 @@ router.post("/create-member", upload.single("image"), async (req, res) => {
       },
     });
 
-    res.json({ success: true, member: newMember });
+    res.json({ success: true, member: newMember, message:"New member created" });
   } catch (error) {
     console.error("Error creating team member:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -102,7 +103,7 @@ router.get("/all-members", async (req, res) => {
     const members = await prisma.teamMember.findMany({
       orderBy: { createdAt: "desc" },
     });
-    res.json(members);
+    res.json({ success: true, members });
   } catch (error) {
     console.error("Error fetching members:", error);
     res.status(500).json({ message: "Failed to fetch members" });
@@ -142,7 +143,7 @@ router.put("/update-user/:id", upload.single("image"), async (req, res) => {
       },
     });
 
-    res.json({ success: true, member: updatedMember });
+    res.json({ success: true, member: updatedMember, message:"Member updated" });
   } catch (error) {
     console.error("Error updating team member:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -163,6 +164,8 @@ router.delete("/delete-user/:id", async (req, res) => {
     if (!member) {
       return res.status(404).json({ success: false, message: "Team member not found" });
     }
+
+    await cloudinary.uploader.destroy(member.imagePublicId);
 
     // Delete the team member
     await prisma.teamMember.delete({

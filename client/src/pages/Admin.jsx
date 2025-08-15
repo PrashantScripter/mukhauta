@@ -3,120 +3,75 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon, User } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { useUser } from "@clerk/clerk-react";
+
 const API = import.meta.env.VITE_SERVER_URL;
-
-const LS_KEYS = {
-  blogs: "admin_blogs_v1",
-  gallery: "admin_gallery_v1",
-  notices: "admin_notices_v1",
-  team: "admin_team_v1",
-};
-
-const loadFromLS = (key, fallback) => {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw);
-  } catch (e) {
-    console.error("Failed to load from localStorage", e);
-    return fallback;
-  }
-};
-
-const saveToLS = (key, value) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    console.error("Failed to save to localStorage", e);
-  }
-};
-
-/* -----------------------------
-  Small helper: file -> base64
-------------------------------*/
-const fileToBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
-/* -----------------------------
-  Initial demo data (one-item examples)
-------------------------------*/
-const initialBlogs = [
-  {
-    id: 1,
-    title: "Behind the Curtain: A Look Into Our Rehearsals",
-    excerpt:
-      "Peek behind the scenes at how we prepare for our annual productions...",
-    content:
-      "Rehearsals are where the magic begins.\n\nWe warm up, block scenes, rehearse entrances and exits, and integrate light and sound. This is where characters are born and bonds are formed.",
-    author: "Ananya Verma",
-    date: "2025-07-25",
-    image: "", // base64 or url
-  },
-];
-
-const initialGallery = [{ id: 1, title: "Annual Drama Night", image: "" }];
-
-const initialNotices = [
-  {
-    id: 1,
-    title: "Auditions for Annual Play",
-    description:
-      "Auditions next week at the auditorium. Bring a short monologue.",
-    date: "2025-08-05",
-  },
-];
-
-const initialTeam = [
-  {
-    id: 1,
-    name: "Aarav Kapoor",
-    role: "President & Director",
-    desc: "Guides the team with vision and direction.",
-    img: "",
-    socials: { instagram: "", linkedin: "", facebook: "" },
-  },
-];
 
 /* -----------------------------
   Admin Page (main)
 ------------------------------*/
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [blogs, setBlogs] = useState([]);
+  const [gallery, setGallery] = useState([]);
+  const [notices, setNotices] = useState([]);
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // State for each resource
-  const [blogs, setBlogs] = useState(() =>
-    loadFromLS(LS_KEYS.blogs, initialBlogs)
-  );
-  const [gallery, setGallery] = useState(() =>
-    loadFromLS(LS_KEYS.gallery, initialGallery)
-  );
-  const [notices, setNotices] = useState(() =>
-    loadFromLS(LS_KEYS.notices, initialNotices)
-  );
-  const [team, setTeam] = useState(() => loadFromLS(LS_KEYS.team, initialTeam));
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        // Fetch blogs
+        const blogsRes = await axios.get(`${API}/api/admin/all-blogs`);
+        if (blogsRes.data.success) {
+          setBlogs(blogsRes.data.data);
+        } else {
+          toast.error("Failed to load blogs");
+        }
 
-  // Persist on change
-  useEffect(() => saveToLS(LS_KEYS.blogs, blogs), [blogs]);
-  useEffect(() => saveToLS(LS_KEYS.gallery, gallery), [gallery]);
-  useEffect(() => saveToLS(LS_KEYS.notices, notices), [notices]);
-  useEffect(() => saveToLS(LS_KEYS.team, team), [team]);
+        // Fetch gallery
+        const galleryRes = await axios.get(`${API}/api/admin/allGallery`);
+        if (galleryRes.data.success) {
+          setGallery(galleryRes.data.data);
+        } else {
+          toast.error("Failed to load gallery");
+        }
+
+        // Fetch notices
+        const noticesRes = await axios.get(`${API}/api/admin/allNotices`);
+        if (noticesRes.data.success) {
+          setNotices(noticesRes.data.notices);
+        } else {
+          toast.error("Failed to load notices");
+        }
+
+        // Fetch team
+        const teamRes = await axios.get(`${API}/api/user/all-members`);
+        if (teamRes.data.success) {
+          setTeam(teamRes.data.members);
+        } else {
+          toast.error("Failed to load team");
+        }
+      } catch (err) {
+        toast.error("Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
   return (
-    <div className="bg-black min-h-screen pt-30 pb-20 px-6 md:px-20  text-white">
+    <div className="bg-black min-h-screen pt-20 pb-10 px-6 md:px-20 text-white">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <header className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Mukhauta Admin</h1>
-            <p className="text-sm text-gray-300">
-              Manage blogs, gallery, notices & team
-            </p>
-          </div>
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold">Mukhauta Admin</h1>
+          <p className="text-sm text-gray-300">
+            Manage blogs, gallery, notices & team
+          </p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -138,7 +93,7 @@ export default function AdminPage() {
                       : "text-gray-200 hover:bg-white/5"
                   }`}
                 >
-                  <span>{label}</span>
+                  {label}
                 </button>
               ))}
             </nav>
@@ -152,9 +107,9 @@ export default function AdminPage() {
                 notices={notices}
                 team={team}
                 setActiveTab={setActiveTab}
+                loading={loading}
               />
             )}
-
             {activeTab === "blogs" && (
               <BlogsManager blogs={blogs} setBlogs={setBlogs} />
             )}
@@ -177,7 +132,7 @@ export default function AdminPage() {
 /* -----------------------------
   Dashboard component
 ------------------------------*/
-function Dashboard({ blogs, gallery, notices, team, setActiveTab }) {
+function Dashboard({ blogs, gallery, notices, team, setActiveTab, loading }) {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
@@ -186,53 +141,43 @@ function Dashboard({ blogs, gallery, notices, team, setActiveTab }) {
           label="Blogs"
           value={blogs.length}
           onClick={() => setActiveTab("blogs")}
+          loading={loading}
         />
         <StatCard
           label="Gallery"
           value={gallery.length}
           onClick={() => setActiveTab("gallery")}
+          loading={loading}
         />
         <StatCard
           label="Notices"
           value={notices.length}
           onClick={() => setActiveTab("notices")}
+          loading={loading}
         />
         <StatCard
           label="Team Members"
           value={team.length}
           onClick={() => setActiveTab("team")}
+          loading={loading}
         />
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold">Quick Actions</h3>
-        <div className="mt-3 flex flex-wrap gap-3">
-          <button
-            onClick={() => setActiveTab("blogs")}
-            className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-          >
-            Add Blog
-          </button>
-          <button
-            onClick={() => setActiveTab("gallery")}
-            className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-          >
-            Add Gallery
-          </button>
-        </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, onClick }) {
+function StatCard({ label, value, onClick, loading }) {
   return (
     <div
       onClick={onClick}
       className="p-4 rounded-xl bg-zinc-950 border border-yellow-700/20 cursor-pointer"
     >
       <p className="text-sm text-gray-300">{label}</p>
-      <p className="text-2xl font-bold text-white">{value}</p>
+      {loading ? (
+        <Loader2Icon className="animate-spin" />
+      ) : (
+        <p className="text-2xl font-bold text-white">{value}</p>
+      )}
     </div>
   );
 }
@@ -241,77 +186,172 @@ function StatCard({ label, value, onClick }) {
   Blogs Manager (CRUD)
 ------------------------------*/
 function BlogsManager({ blogs, setBlogs }) {
+  const { user } = useUser();
   const empty = {
     title: "",
-    excerpt: "",
     content: "",
+    imageUrl: null,
+    imagePreview: null,
     author: "",
-    date: "",
-    image: "",
   };
-  const [editing, setEditing] = useState(null); // id or null
+
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(empty);
+  const [backendRequest, setBackendRequest] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (form.imagePreview) URL.revokeObjectURL(form.imagePreview);
+    };
+  }, [form.imagePreview]);
 
   useEffect(() => {
     if (editing) {
       const b = blogs.find((x) => x.id === editing);
-      if (b) setForm({ ...b });
-    } else setForm(empty);
-  }, [editing]);
+      if (b) {
+        setForm({
+          ...b,
+          imageUrl: null,
+          imagePreview: b.imageUrl || null,
+        });
+      }
+    } else {
+      setForm(empty);
+    }
+  }, [editing, blogs]);
+
+  const fetchBlogs = async () => {
+    try {
+      const res = await axios.get(`${API}/api/admin/all-blogs`);
+      if (res.data.success) {
+        setBlogs(res.data.data);
+      } else {
+        toast.error("Failed to load blogs");
+      }
+    } catch (err) {
+      toast.error("Failed to load blogs");
+    }
+  };
 
   const create = async () => {
-    const next = Math.max(0, ...blogs.map((b) => b.id)) + 1;
-    setBlogs([{ id: next, ...form }, ...blogs]);
-    setEditing(null);
+    if (!form.title.trim() || !form.content.trim()) {
+      toast.error("Title and content are required");
+      return;
+    }
+    setBackendRequest(true);
+    try {
+      const fd = new FormData();
+      fd.append("title", form.title.trim());
+      fd.append("content", form.content.trim());
+      fd.append("author", user.fullName);
+      if (form.imageUrl) fd.append("image", form.imageUrl);
+
+      const res = await axios.post(`${API}/api/admin/create-blog`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log(res);
+
+      if (res.data.success) {
+        setBlogs([res.data.data, ...blogs]);
+        setEditing(null);
+        setForm(empty);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to create blog");
+      }
+    } catch (err) {
+      toast.error("Failed to create blog");
+    }
+    setBackendRequest(false);
   };
 
   const update = async () => {
-    setBlogs(
-      blogs.map((b) => (b.id === editing ? { ...form, id: editing } : b))
-    );
-    setEditing(null);
+    if (!editing) return;
+    if (!form.title.trim() || !form.content.trim()) {
+      toast.error("Title and content are required");
+      return;
+    }
+    setBackendRequest(true);
+    try {
+      const fd = new FormData();
+      fd.append("title", form.title.trim());
+      fd.append("content", form.content.trim());
+      if (form.imageUrl) fd.append("image", form.imageUrl);
+
+      const res = await axios.put(
+        `${API}/api/admin/update-blog/${editing}`,
+        fd,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log(res);
+      if (res.data.success) {
+        setBlogs(blogs.map((b) => (b.id === editing ? res.data.data : b)));
+        setEditing(null);
+        setForm(empty);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to update blog");
+      }
+    } catch (err) {
+      toast.error("Failed to update blog");
+    }
+    setBackendRequest(false);
   };
 
-  const remove = (id) => {
+  const remove = async (id) => {
     if (!confirm("Delete this blog?")) return;
-    setBlogs(blogs.filter((b) => b.id !== id));
+    setDeletingId(id);
+    try {
+      const res = await axios.delete(`${API}/api/admin/delete-blog/${id}`);
+      console.log(res);
+      if (res.data.success) {
+        setBlogs(blogs.filter((b) => b.id !== id));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to delete blog");
+      }
+    } catch (err) {
+      toast.error("Failed to delete blog");
+    }
+    setDeletingId(null);
   };
 
-  const onFile = async (e) => {
+  const onFile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const data = await fileToBase64(file);
-    setForm((f) => ({ ...f, image: data }));
+    if (form.imagePreview) URL.revokeObjectURL(form.imagePreview);
+    const preview = URL.createObjectURL(file);
+    setForm((f) => ({ ...f, imageUrl: file, imagePreview: preview }));
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Blogs</h2>
-        <div>
-          <button
-            onClick={() => setEditing(null)}
-            className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
-          >
-            Create New
-          </button>
-        </div>
+        <button
+          onClick={() => setEditing(null)}
+          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+        >
+          Create New
+        </button>
       </div>
 
-      {/* Form */}
       <div className="mb-6 bg-[#0f0f0f] p-4 rounded">
         <label className="text-sm text-gray-300">Title</label>
         <input
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="w-full bg-black border border-yellow-600 px-3 py-2 rounded mt-1 mb-3 text-white"
-        />
-
-        <label className="text-sm text-gray-300">Excerpt</label>
-        <input
-          value={form.excerpt}
-          onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-          className="w-full bg-black border border-yellow-600 px-3 py-2 rounded mt-1 mb-3 text-white"
+          className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <label className="text-sm text-gray-300">
@@ -321,59 +361,46 @@ function BlogsManager({ blogs, setBlogs }) {
           value={form.content}
           onChange={(e) => setForm({ ...form, content: e.target.value })}
           rows={6}
-          className="w-full bg-black border border-yellow-600 px-3 py-2 rounded mt-1 mb-3 text-white"
+          className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label className="text-sm text-gray-300">Author</label>
-            <input
-              value={form.author}
-              onChange={(e) => setForm({ ...form, author: e.target.value })}
-              className="w-full bg-black border border-yellow-600 px-3 py-2 rounded mt-1 mb-3 text-white"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-300">Date</label>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="w-full bg-black border border-yellow-600 px-3 py-2 rounded mt-1 mb-3 text-white"
-            />
-          </div>
-
           <div>
             <label className="text-sm text-gray-300">Image</label>
             <input
               type="file"
               accept="image/*"
               onChange={onFile}
-              className="w-full mt-1 text-sm text-gray-300"
+              className="w-full mt-1 text-sm text-gray-300 bg-black py-2 px-3 rounded cursor-pointer"
             />
-            {form.image && (
+            {form.imagePreview && (
               <img
-                src={form.image}
+                src={form.imagePreview}
                 alt="preview"
                 className="w-32 h-20 object-cover mt-2 rounded"
               />
             )}
           </div>
         </div>
-
         <div className="mt-3 flex gap-3">
           {editing ? (
             <>
               <button
                 onClick={update}
-                className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
+                disabled={backendRequest}
+                className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
               >
                 Update
+                {backendRequest && <Loader2Icon className="animate-spin" />}
               </button>
               <button
-                onClick={() => setEditing(null)}
+                onClick={() => {
+                  setEditing(null);
+                  setForm(empty);
+                }}
                 className="px-4 py-2 rounded bg-white/5"
+                disabled={backendRequest}
               >
                 Cancel
               </button>
@@ -381,15 +408,16 @@ function BlogsManager({ blogs, setBlogs }) {
           ) : (
             <button
               onClick={create}
-              className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
+              disabled={backendRequest}
+              className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
             >
               Create
+              {backendRequest && <Loader2Icon className="animate-spin" />}
             </button>
           )}
         </div>
       </div>
 
-      {/* List */}
       <div className="space-y-3">
         {blogs.map((b) => (
           <div
@@ -397,9 +425,9 @@ function BlogsManager({ blogs, setBlogs }) {
             className="p-3 bg-[#111111] rounded flex items-center gap-3 border border-yellow-700/10"
           >
             <div className="w-20 h-12 bg-gray-800 rounded overflow-hidden">
-              {b.image ? (
+              {b.imageUrl ? (
                 <img
-                  src={b.image}
+                  src={b.imageUrl}
                   alt={b.title}
                   className="w-full h-full object-cover"
                 />
@@ -414,18 +442,21 @@ function BlogsManager({ blogs, setBlogs }) {
                 <h4 className="font-semibold">{b.title}</h4>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => {
-                      setEditing(b.id);
-                    }}
+                    onClick={() => setEditing(b.id)}
                     className="text-sm px-2 py-1 rounded bg-white/5"
+                    disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => remove(b.id)}
-                    className="text-sm px-2 py-1 rounded bg-red-600 text-black"
+                    className="flex items-center gap-2 text-sm px-2 py-1 rounded bg-red-600 text-white"
+                    disabled={deletingId !== null}
                   >
                     Delete
+                    {deletingId === b.id && (
+                      <Loader2Icon className="animate-spin" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -445,46 +476,97 @@ function BlogsManager({ blogs, setBlogs }) {
   Gallery Manager (CRUD)
 ------------------------------*/
 function GalleryManager({ gallery, setGallery }) {
-  const empty = { title: "", image: "" };
-  const [editing, setEditing] = useState(null);
+  const empty = { title: "", image: null, preview: null };
   const [form, setForm] = useState(empty);
   const [backendRequest, setBackendRequest] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
-   
+    fetchGallery();
   }, []);
 
-  const create = async () => {
-    
+  useEffect(() => {
+    return () => {
+      if (form.preview) URL.revokeObjectURL(form.preview);
+    };
+  }, [form.preview]);
+
+  const fetchGallery = async () => {
+    try {
+      const res = await axios.get(`${API}/api/admin/allGallery`);
+      if (res.data.success) {
+        setGallery(res.data.data);
+      } else {
+        toast.error("Failed to load gallery");
+      }
+    } catch (err) {
+      toast.error("Failed to load gallery");
+    }
   };
 
-  const update = async () => {
-    
-  };
-
-  const remove = (id) => {
-    
-  };
-
-  const onFile = async (e) => {
-    const file = e.target.files[0];
+  const onFile = (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-    const data = await fileToBase64(file);
-    setForm((f) => ({ ...f, image: data }));
+    if (form.preview) URL.revokeObjectURL(form.preview);
+    const preview = URL.createObjectURL(file);
+    setForm((f) => ({ ...f, image: file, preview }));
+  };
+
+  const create = async () => {
+    if (!form.title.trim() || !form.image) {
+      toast.error("Title and image are required");
+      return;
+    }
+    setBackendRequest(true);
+    try {
+      const fd = new FormData();
+      fd.append("title", form.title.trim());
+      fd.append("image", form.image);
+
+      const res = await axios.post(`${API}/api/admin/upload-image`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.data.success) {
+        setGallery([res.data.data, ...gallery]);
+        setForm(empty);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to upload image");
+      }
+    } catch (err) {
+      toast.error("Failed to upload image");
+    }
+    setBackendRequest(false);
+  };
+
+  const remove = async (id) => {
+    if (!confirm("Delete this gallery item?")) return;
+    setDeletingId(id);
+    try {
+      const res = await axios.delete(`${API}/api/admin/delete-image/${id}`);
+      if (res.data.success) {
+        setGallery(gallery.filter((g) => g.id !== id));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to delete image");
+      }
+    } catch (err) {
+      toast.error("Failed to delete image");
+    }
+    setDeletingId(null);
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Gallery</h2>
-        <div>
-          <button
-            onClick={() => setEditing(null)}
-            className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
-          >
-            Add Image
-          </button>
-        </div>
+        <button
+          onClick={() => setForm(empty)}
+          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+        >
+          Clear
+        </button>
       </div>
 
       <div className="mb-6 bg-zinc-950 p-4 rounded">
@@ -493,6 +575,7 @@ function GalleryManager({ gallery, setGallery }) {
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <label className="text-sm text-gray-300">Choose Image</label>
@@ -500,48 +583,26 @@ function GalleryManager({ gallery, setGallery }) {
           type="file"
           accept="image/*"
           onChange={onFile}
-          className="w-full mt-1 text-sm text-gray-300 bg-black py-2 px-3 cursor-pointer"
+          className="w-full mt-1 text-sm text-gray-300 bg-black py-2 px-3 rounded cursor-pointer"
         />
-        {form.image && (
+
+        {form.preview && (
           <img
-            src={form.image}
+            src={form.preview}
             alt="preview"
             className="w-48 h-28 object-cover mt-2 rounded"
           />
         )}
 
         <div className="mt-3 flex gap-3">
-          {editing ? (
-            <>
-              <button
-                onClick={update}
-                className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-              >
-                Update
-              </button>
-              <button
-                onClick={() => setEditing(null)}
-                className="px-4 py-2 rounded bg-white/5"
-              >
-                Cancel
-              </button>
-            </>
-          ) : backendRequest ? (
-            <button
-              onClick={create}
-              className="flex flex-row gap-2 items-center px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-            >
-              Uploading...
-              <Loader2Icon className="animate-spin" />
-            </button>
-          ) : (
-            <button
-              onClick={create}
-              className="px-4 py-2 rounded cursor-pointer bg-yellow-500 text-black font-semibold"
-            >
-              Upload
-            </button>
-          )}
+          <button
+            onClick={create}
+            disabled={backendRequest}
+            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+          >
+            Upload
+            {backendRequest && <Loader2Icon className="animate-spin" />}
+          </button>
         </div>
       </div>
 
@@ -552,9 +613,9 @@ function GalleryManager({ gallery, setGallery }) {
             className="bg-zinc-950 p-3 rounded border border-yellow-700/10"
           >
             <div className="w-full h-44 bg-gray-800 rounded overflow-hidden mb-2">
-              {g.image ? (
+              {g.ImageUrl ? (
                 <img
-                  src={g.image}
+                  src={g.ImageUrl}
                   alt={g.title}
                   className="w-full h-full object-cover"
                 />
@@ -569,20 +630,16 @@ function GalleryManager({ gallery, setGallery }) {
                 <p className="font-semibold">{g.title}</p>
                 <p className="text-xs text-gray-400">ID: {g.id}</p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setEditing(g.id)}
-                  className="px-2 py-1 rounded bg-white/5"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => remove(g.id)}
-                  className="px-2 py-1 rounded bg-red-600 text-black"
-                >
-                  Delete
-                </button>
-              </div>
+              <button
+                onClick={() => remove(g.id)}
+                className="flex items-center gap-2 px-2 py-1 rounded bg-red-600 text-white"
+                disabled={deletingId !== null}
+              >
+                Delete
+                {deletingId === g.id && (
+                  <Loader2Icon className="animate-spin" />
+                )}
+              </button>
             </div>
           </div>
         ))}
@@ -594,77 +651,103 @@ function GalleryManager({ gallery, setGallery }) {
 /* -----------------------------
   Notices Manager
 ------------------------------*/
-function NoticesManager() {
+function NoticesManager({ notices, setNotices }) {
   const empty = { title: "", description: "" };
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(empty);
-  const [notices, setNotices] = useState([]);
   const [backendRequest, setBackendRequest] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     getNotices();
   }, []);
 
-  // ✅ Fetch all notices
   const getNotices = async () => {
     try {
       const res = await axios.get(`${API}/api/admin/allNotices`);
-      setNotices(res.data);
-      console.log(res.data);
-    } catch (error) {
-      console.error(error);
+      if (res.data.success) {
+        setNotices(res.data.notices);
+      } else {
+        toast.error("Failed to load notices");
+      }
+    } catch (err) {
+      toast.error("Failed to load notices");
     }
   };
 
-  // ✅ Create new notice
   const createNotice = async (e) => {
     e.preventDefault();
+    if (!form.title.trim() || !form.description.trim()) {
+      toast.error("Title and description are required");
+      return;
+    }
     setBackendRequest(true);
     try {
-      const res = await axios.post(`${API}/api/admin/create-notice`, form);
-      setForm(empty);
-      toast.success(res.data.message);
-      getNotices(); // refresh list
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setBackendRequest(false);
+      const res = await axios.post(`${API}/api/admin/create-notice`, {
+        title: form.title.trim(),
+        description: form.description.trim(),
+      });
+      console.log(res.data);
+      if (res.data.success) {
+        setNotices([res.data.notice, ...notices]);
+        setForm(empty);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to create notice");
+      }
+    } catch (err) {
+      toast.error("Failed to create notice");
     }
+    setBackendRequest(false);
   };
 
-  // ✅ Update existing notice
   const updateNotice = async (e) => {
     e.preventDefault();
+    if (!editing || !form.title.trim() || !form.description.trim()) {
+      toast.error("Title and description are required");
+      return;
+    }
+    console.log(editing);
     setBackendRequest(true);
     try {
-      const res = await axios.put(
-        `${API}/api/admin/update-notice/${editing}`,
-        form
-      );
-      setForm(empty);
-      setEditing(null);
-      getNotices();
-      toast.success(res.data.message);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setBackendRequest(false);
+      const res = await axios.put(`${API}/api/admin/update-notice/${editing}`, {
+        title: form.title.trim(),
+        description: form.description.trim(),
+      });
+      console.log(res.data);
+      if (res.data.success) {
+        setNotices(
+          notices.map((n) => (n.id === editing ? res.data.updated : n))
+        );
+        setEditing(null);
+        setForm(empty);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to update notice");
+      }
+    } catch (err) {
+      toast.error("Failed to update notice");
     }
+    setBackendRequest(false);
   };
 
-  // ✅ Delete notice
   const removeNotice = async (id) => {
     if (!confirm("Delete this notice?")) return;
+    setDeletingId(id);
     try {
       const res = await axios.delete(`${API}/api/admin/delete-notice/${id}`);
-      getNotices(); // refresh list
-      toast.success(res.data.message);
-    } catch (error) {
-      console.error(error);
+      if (res.data.success) {
+        setNotices(notices.filter((n) => n.id !== id));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to delete notice");
+      }
+    } catch (err) {
+      toast.error("Failed to delete notice");
     }
+    setDeletingId(null);
   };
 
-  // ✅ Set form data when editing
   const startEditing = (id) => {
     const notice = notices.find((n) => n.id === id);
     if (notice) {
@@ -682,9 +765,9 @@ function NoticesManager() {
             setEditing(null);
             setForm(empty);
           }}
-          className="px-3 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
+          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
         >
-          clear
+          Clear
         </button>
       </div>
 
@@ -694,65 +777,41 @@ function NoticesManager() {
       >
         <label className="text-sm text-gray-300">Title</label>
         <input
-          required
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <label className="text-sm text-gray-300">Description</label>
         <textarea
-          required
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           rows={4}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <div className="mt-3 flex gap-3">
-          {editing ? (
-            <>
-              {backendRequest ? (
-                <button
-                  type="submit"
-                  className="flex flex-row gap-2 items-center px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-                >
-                  Update
-                  <Loader2Icon className="animate-spin" />
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded bg-yellow-500 text-black font-semibold"
-                >
-                  Update
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(null);
-                  setForm(empty);
-                }}
-                className="px-4 py-2 rounded bg-white/5"
-              >
-                Cancel
-              </button>
-            </>
-          ) : backendRequest ? (
+          <button
+            type="submit"
+            disabled={backendRequest}
+            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+          >
+            {editing ? "Update" : "Create Notice"}
+            {backendRequest && <Loader2Icon className="animate-spin" />}
+          </button>
+          {editing && (
             <button
-              type="submit"
-              className=" flex flex-row gap-2 items-center px-4 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
+              type="button"
+              onClick={() => {
+                setEditing(null);
+                setForm(empty);
+              }}
+              className="px-4 py-2 rounded bg-white/5"
+              disabled={backendRequest}
             >
-              Create Notice
-              <Loader2Icon className="animate-spin" />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="px-4 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
-            >
-              Create Notice
+              Cancel
             </button>
           )}
         </div>
@@ -770,15 +829,20 @@ function NoticesManager() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEditing(n.id)}
-                    className="text-sm px-2 py-1 rounded bg-white/5 cursor-pointer"
+                    className="text-sm px-2 py-1 rounded bg-white/5"
+                    disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => removeNotice(n.id)}
-                    className="text-sm px-2 py-1 rounded bg-red-600 text-white cursor-pointer"
+                    className="flex items-center gap-2 text-sm px-2 py-1 rounded bg-red-600 text-white"
+                    disabled={deletingId !== null}
                   >
                     Delete
+                    {deletingId === n.id && (
+                      <Loader2Icon className="animate-spin" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -797,56 +861,54 @@ function NoticesManager() {
 /* -----------------------------
   Team Manager (CRUD)
 ------------------------------*/
+function TeamManager({ team, setTeam }) {
+  const empty = {
+    name: "",
+    role: "",
+    desc: "",
+    imageUrl: null,
+    imgPreview: null,
+    socials: { instagram: "", linkedin: "", facebook: "" },
+  };
 
-const emptyForm = {
-  id: null,
-  name: "",
-  role: "",
-  desc: "",
-  // imageUrl is stored when server returns uploaded file URL
-  imageUrl: "",
-  // imageFile is a File used for uploading (not sent to server as JSON)
-  imageFile: null,
-  // preview locally
-  imgPreview: null,
-  socials: { instagram: "", linkedin: "", facebook: "" },
-};
-
-function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
-  const [team, setTeam] = useState(initialTeam);
-  const [form, setForm] = useState(emptyForm);
-  const [editing, setEditing] = useState(false); // boolean: are we editing existing member?
+  const [form, setForm] = useState(empty);
+  const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
-  // fetch team on mount
   useEffect(() => {
     fetchTeam();
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (form.imgPreview) URL.revokeObjectURL(form.imgPreview);
+    };
+  }, [form.imgPreview]);
 
   const fetchTeam = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${API}/api/user/all-members`);
-      setTeam(res.data);
-      console.log(res.data);
+      console.log(res);
+      if (res.data.success) {
+        setTeam(res.data.members);
+      } else {
+        toast.error("Failed to load team");
+      }
     } catch (err) {
-      console.error("Failed to fetch team", err);
-      alert("Failed to fetch team. Check console for details.");
-    } finally {
-      setLoading(false);
+      toast.error("Failed to load team");
     }
+    setLoading(false);
   };
 
-  // when admin clicks Edit, we fill form with member data
   const handleEdit = (member) => {
     setForm({
-      id: member.id,
       name: member.name || "",
       role: member.role || "",
       desc: member.description || "",
-      imageUrl: member.imageUrl || "",
-      imageFile: null,
+      imageUrl: member.imageUrl,
       imgPreview: member.imageUrl || null,
       socials: {
         instagram: member.socials?.instagram || "",
@@ -854,149 +916,153 @@ function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
         facebook: member.socials?.facebook || "",
       },
     });
-    setEditing(true);
+    setEditing(member.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
-    // revoke objectURL to free memory if used
-    if (form.imgPreview && form.imageFile) URL.revokeObjectURL(form.imgPreview);
-    setForm({ ...emptyForm });
-    setEditing(false);
+    if (form.imgPreview) URL.revokeObjectURL(form.imgPreview);
+    setForm(empty);
+    setEditing(null);
   };
 
   const onFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // preview using objectURL (more efficient than base64)
+    if (form.imgPreview) URL.revokeObjectURL(form.imgPreview);
     const preview = URL.createObjectURL(file);
-    // revoke old preview if one existed
-    if (form.imgPreview && form.imageFile) URL.revokeObjectURL(form.imgPreview);
-    setForm((f) => ({ ...f, imageFile: file, imgPreview: preview }));
+    setForm((f) => ({ ...f, imageUrl: file, imgPreview: preview }));
   };
 
   const handleChangeSocial = (key, value) =>
     setForm((f) => ({ ...f, socials: { ...f.socials, [key]: value } }));
 
   const createMember = async () => {
+    if (!form.name.trim() || !form.role.trim() || !form.desc.trim()) {
+      toast.error("Name, role, and bio are required");
+      return;
+    }
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("name", form.name);
-      fd.append("role", form.role);
-      fd.append("description", form.desc || "");
-      fd.append("socialLinks", JSON.stringify(form.socials || {}));
-      if (form.imageFile) fd.append("image", form.imageFile);
+      fd.append("name", form.name.trim());
+      fd.append("role", form.role.trim());
+      fd.append("description", form.desc.trim());
+      fd.append("socialLinks", JSON.stringify(form.socials));
+      if (form.imageUrl) fd.append("image", form.imageUrl);
 
       const res = await axios.post(`${API}/api/user/create-member`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const created = res.data.member || res.data;
-      console.log(created);
-      // update local state and parent if provided
-      setTeam((t) => [created, ...t]);
-      if (typeof setParentTeam === "function")
-        setParentTeam([created, ...team]);
-
-      resetForm();
+      if (res.data.success) {
+        setTeam([res.data.member, ...team]);
+        resetForm();
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to create member");
+      }
     } catch (err) {
-      console.error("Create failed", err);
-      alert("Create failed");
-    } finally {
-      setSubmitting(false);
+      toast.error("Failed to create member");
     }
+    setSubmitting(false);
   };
 
   const updateMember = async () => {
-    if (!form.id) return;
+    if (
+      !editing ||
+      !form.name.trim() ||
+      !form.role.trim() ||
+      !form.desc.trim()
+    ) {
+      toast.error("Name, role, and bio are required");
+      return;
+    }
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("name", form.name);
-      fd.append("role", form.role);
-      fd.append("description", form.desc || "");
-      fd.append("socialLinks", JSON.stringify(form.socials || {}));
-      if (form.imageFile) fd.append("image", form.imageFile);
+      fd.append("name", form.name.trim());
+      fd.append("role", form.role.trim());
+      fd.append("description", form.desc.trim());
+      fd.append("socialLinks", JSON.stringify(form.socials));
+      if (form.imageUrl) fd.append("image", form.imageUrl);
 
       const res = await axios.put(
-        `${API}/api/user/update-user/${form.id}`,
+        `${API}/api/user/update-user/${editing}`,
         fd,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
-      const updated = res.data.member || res.data;
-      setTeam((t) => t.map((m) => (m.id === updated.id ? updated : m)));
-      if (typeof setParentTeam === "function")
-        setParentTeam(team.map((m) => (m.id === updated.id ? updated : m)));
+      console.log(res);
 
-      resetForm();
+      if (res.data.success) {
+        setTeam(team.map((m) => (m.id === editing ? res.data.member : m)));
+        resetForm();
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to update member");
+      }
     } catch (err) {
-      console.error("Update failed", err);
-      alert("Update failed. See console for details.");
-    } finally {
-      setSubmitting(false);
+      toast.error("Failed to update member");
     }
+    setSubmitting(false);
   };
 
   const removeMember = async (id) => {
-    if (!confirm("Delete this team member? This action cannot be undone."))
-      return;
+    if (!confirm("Delete this team member?")) return;
+    setDeletingId(id);
     try {
-      await axios.delete(`${API}/api/user/delete-user/${id}`);
-      setTeam((t) => t.filter((m) => m.id !== id));
-      if (typeof setParentTeam === "function")
-        setParentTeam(team.filter((m) => m.id !== id));
+      const res = await axios.delete(`${API}/api/user/delete-user/${id}`);
+      if (res.data.success) {
+        setTeam(team.filter((m) => m.id !== id));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Failed to delete member");
+      }
     } catch (err) {
-      console.error("Delete failed", err);
-      alert("Delete failed. See console for details.");
+      toast.error("Failed to delete member");
     }
+    setDeletingId(null);
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Team</h2>
-        <div>
-          <button
-            onClick={() => {
-              resetForm();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="px-3 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
-          >
-            Clear form
-          </button>
-        </div>
+        <button
+          onClick={resetForm}
+          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+        >
+          Clear
+        </button>
       </div>
 
-      {/* FORM */}
       <form className="mb-6 bg-zinc-950 p-4 rounded">
         <label className="text-sm text-gray-300">Name</label>
         <input
           value={form.name}
-          required
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <label className="text-sm text-gray-300">Role</label>
         <input
           value={form.role}
-          required
           onChange={(e) => setForm({ ...form, role: e.target.value })}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <label className="text-sm text-gray-300">Bio / Short Description</label>
         <textarea
-          required
           value={form.desc}
           onChange={(e) => setForm({ ...form, desc: e.target.value })}
           rows={3}
           className="w-full bg-black border border-yellow-600/50 px-3 py-2 rounded mt-1 mb-3 text-white"
+          required
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1006,7 +1072,6 @@ function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
               type="file"
               accept="image/*"
               onChange={onFile}
-              required
               className="w-full mt-1 text-sm text-gray-300 py-2 px-3 rounded bg-black cursor-pointer"
             />
             {form.imgPreview && (
@@ -1038,55 +1103,31 @@ function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
         </div>
 
         <div className="mt-3 flex gap-3">
-          {editing ? (
-            <>
-              <button
-                onClick={updateMember}
-                disabled={submitting}
-                className="px-4 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
-              >
-                {submitting ? (
-                  <span className="flex flex-row gap-2 items-center ">
-                    Add member
-                    <Loader2Icon className="animate-spin" />
-                  </span>
-                ) : (
-                  "Update"
-                )}
-              </button>
-              <button
-                onClick={resetForm}
-                className="px-4 py-2 rounded bg-white/5 cursor-pointer"
-                disabled={submitting}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
+          <button
+            onClick={editing ? updateMember : createMember}
+            disabled={submitting}
+            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+          >
+            {editing ? "Update" : "Add Member"}
+            {submitting && <Loader2Icon className="animate-spin" />}
+          </button>
+          {editing && (
             <button
-              onClick={createMember}
+              onClick={resetForm}
+              className="px-4 py-2 rounded bg-white/5"
               disabled={submitting}
-              className="px-4 py-2 rounded cursor-pointer bg-yellow-500 text-black font-semibold disabled:opacity-60"
             >
-              {submitting ? (
-                <span className="flex flex-row gap-2 items-center">
-                  Add member
-                  <Loader2Icon className="animate-spin" />
-                </span>
-              ) : (
-                "Add member"
-              )}
+              Cancel
             </button>
           )}
         </div>
       </form>
 
-      {/* LIST */}
       {loading ? (
         <div>Loading team...</div>
       ) : (
         <div className="flex flex-col gap-2">
-          <h2 className=" flex flex-row items-center gap-2">
+          <h2 className="flex items-center gap-2">
             <User size={18} />
             All Users
           </h2>
@@ -1112,25 +1153,30 @@ function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
                 <div className="flex-1">
                   <p className="font-semibold">{m.name}</p>
                   <p className="text-sm text-yellow-400">{m.role}</p>
-                  <p className="text-xs text-gray-300 mt-1">{m.description}</p>
+                  <p className="text-xs text-gray-300 mt-1 line-clamp-3">
+                    {m.description}
+                  </p>
                 </div>
                 <div className="flex flex-row gap-2">
                   <button
                     onClick={() => handleEdit(m)}
-                    className="px-2 py-1 rounded bg-white/5 cursor-pointer"
+                    className="px-2 py-1 rounded bg-white/5"
+                    disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => removeMember(m.id)}
-                    className="px-2 py-1 rounded bg-red-600 text-white cursor-pointer"
+                    className="flex items-center gap-2 px-2 py-1 rounded bg-red-600 text-white"
+                    disabled={deletingId !== null}
                   >
                     Delete
+                    {deletingId === m.id && (
+                      <Loader2Icon className="animate-spin" />
+                    )}
                   </button>
                 </div>
               </div>
-
-              {/* Socials */}
               <div className="mt-3 flex gap-3">
                 {m.socials?.instagram && (
                   <a
@@ -1170,30 +1216,3 @@ function TeamManager({ initialTeam = [], setTeam: setParentTeam }) {
     </div>
   );
 }
-
-/* -----------------------------
-  Notes & How to wire to backend
-------------------------------*/
-
-/*
-  Replace the localStorage helpers (loadFromLS/saveToLS) with API calls.
-  Example with axios (pseudo):
-
-  // load
-  const fetchBlogs = async () => {
-    const res = await axios.get('/api/admin/blogs'); setBlogs(res.data);
-  }
-
-  // create
-  const createBlog = async (blog) => {
-    const res = await axios.post('/api/admin/blogs', blog); setBlogs([res.data, ...blogs]);
-  }
-
-  For images, it's recommended to upload them to Cloudinary/S3 and store only the URL in your records.
-  In admin UI, replace fileToBase64 usage with upload flow:
-    1. select file
-    2. upload to storage service via signed URL or direct API
-    3. save returned URL into the resource
-
-  Security: protect this admin route behind authentication (Clerk/Auth0/Firebase). Do not expose admin API to public.
-*/
