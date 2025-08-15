@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
+  useAuth,
   UserButton,
 } from "@clerk/clerk-react";
 import {
@@ -30,6 +31,22 @@ import {
 import { Link } from "react-router-dom";
 
 const Header = () => {
+  const { getToken, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    const syncMe = async () => {
+      const token = await getToken();
+      await fetch(`${import.meta.env.VITE_SERVER_URL}/api/sync/me`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    };
+
+    if (isSignedIn) {
+      syncMe();
+    }
+  }, [isSignedIn, getToken]);
+
   return (
     <header className="flex flex-row cursor-pointer z-50 justify-between items-center p-4 lg:px-10 fixed top-0 w-dvw backdrop-blur-xl">
       <div className="flex flex-row gap-2 items-center">
