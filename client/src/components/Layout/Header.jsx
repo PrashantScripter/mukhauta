@@ -216,7 +216,7 @@ const Header = () => {
                   {isSignedIn && loggedInUser.role === "admin" ? (
                     <MenubarItem>
                     <User />
-                    <Link to={"/team"} className="relative text-white group">
+                    <Link to={"/admin"} className="relative text-white group">
                       Admin
                       <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
                     </Link>
