@@ -338,10 +338,10 @@ function BlogsManager({ blogs, setBlogs }) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Blogs</h2>
         <button
-          onClick={() => setEditing(null)}
-          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+          onClick={() => setForm(empty)}
+          className="px-3 py-2 rounded cursor-pointer bg-yellow-500 text-black font-semibold"
         >
-          Create New
+          clear
         </button>
       </div>
 
@@ -355,7 +355,7 @@ function BlogsManager({ blogs, setBlogs }) {
         />
 
         <label className="text-sm text-gray-300">
-          Content (Markdown or plain text)
+          Content
         </label>
         <textarea
           value={form.content}
@@ -389,7 +389,7 @@ function BlogsManager({ blogs, setBlogs }) {
               <button
                 onClick={update}
                 disabled={backendRequest}
-                className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+                className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
               >
                 Update
                 {backendRequest && <Loader2Icon className="animate-spin" />}
@@ -399,7 +399,7 @@ function BlogsManager({ blogs, setBlogs }) {
                   setEditing(null);
                   setForm(empty);
                 }}
-                className="px-4 py-2 rounded bg-white/5"
+                className="px-4 py-2 rounded bg-white/5 cursor-pointer"
                 disabled={backendRequest}
               >
                 Cancel
@@ -409,7 +409,7 @@ function BlogsManager({ blogs, setBlogs }) {
             <button
               onClick={create}
               disabled={backendRequest}
-              className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+              className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
             >
               Create
               {backendRequest && <Loader2Icon className="animate-spin" />}
@@ -443,14 +443,14 @@ function BlogsManager({ blogs, setBlogs }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditing(b.id)}
-                    className="text-sm px-2 py-1 rounded bg-white/5"
+                    className="text-sm px-2 py-1 rounded bg-white/5 cursor-pointer"
                     disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => remove(b.id)}
-                    className="flex items-center gap-2 text-sm px-2 py-1 rounded bg-red-600 text-white"
+                    className="flex items-center gap-2 cursor-pointer text-sm px-2 py-1 rounded bg-red-600 text-white"
                     disabled={deletingId !== null}
                   >
                     Delete
@@ -563,7 +563,7 @@ function GalleryManager({ gallery, setGallery }) {
         <h2 className="text-2xl font-bold">Gallery</h2>
         <button
           onClick={() => setForm(empty)}
-          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+          className="px-3 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
         >
           Clear
         </button>
@@ -598,7 +598,7 @@ function GalleryManager({ gallery, setGallery }) {
           <button
             onClick={create}
             disabled={backendRequest}
-            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
           >
             Upload
             {backendRequest && <Loader2Icon className="animate-spin" />}
@@ -632,7 +632,7 @@ function GalleryManager({ gallery, setGallery }) {
               </div>
               <button
                 onClick={() => remove(g.id)}
-                className="flex items-center gap-2 px-2 py-1 rounded bg-red-600 text-white"
+                className="flex items-center gap-2 cursor-pointer px-2 py-1 rounded bg-red-600 text-white"
                 disabled={deletingId !== null}
               >
                 Delete
@@ -765,7 +765,7 @@ function NoticesManager({ notices, setNotices }) {
             setEditing(null);
             setForm(empty);
           }}
-          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+          className="px-3 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
         >
           Clear
         </button>
@@ -796,7 +796,7 @@ function NoticesManager({ notices, setNotices }) {
           <button
             type="submit"
             disabled={backendRequest}
-            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+            className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
           >
             {editing ? "Update" : "Create Notice"}
             {backendRequest && <Loader2Icon className="animate-spin" />}
@@ -808,7 +808,7 @@ function NoticesManager({ notices, setNotices }) {
                 setEditing(null);
                 setForm(empty);
               }}
-              className="px-4 py-2 rounded bg-white/5"
+              className="px-4 py-2 rounded bg-white/5 cursor-pointer"
               disabled={backendRequest}
             >
               Cancel
@@ -829,14 +829,14 @@ function NoticesManager({ notices, setNotices }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEditing(n.id)}
-                    className="text-sm px-2 py-1 rounded bg-white/5"
+                    className="text-sm px-2 py-1 rounded bg-white/5 cursor-pointer"
                     disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => removeNotice(n.id)}
-                    className="flex items-center gap-2 text-sm px-2 py-1 rounded bg-red-600 text-white"
+                    className="flex items-center gap-2 cursor-pointer text-sm px-2 py-1 rounded bg-red-600 text-white"
                     disabled={deletingId !== null}
                   >
                     Delete
@@ -1033,7 +1033,7 @@ function TeamManager({ team, setTeam }) {
         <h2 className="text-2xl font-bold">Team</h2>
         <button
           onClick={resetForm}
-          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+          className="px-3 py-2 cursor-pointer rounded bg-yellow-500 text-black font-semibold"
         >
           Clear
         </button>
@@ -1106,7 +1106,7 @@ function TeamManager({ team, setTeam }) {
           <button
             onClick={editing ? updateMember : createMember}
             disabled={submitting}
-            className="flex items-center gap-2 px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-yellow-500 text-black font-semibold disabled:opacity-60"
           >
             {editing ? "Update" : "Add Member"}
             {submitting && <Loader2Icon className="animate-spin" />}
@@ -1114,7 +1114,7 @@ function TeamManager({ team, setTeam }) {
           {editing && (
             <button
               onClick={resetForm}
-              className="px-4 py-2 rounded bg-white/5"
+              className="px-4 py-2 rounded bg-white/5 cursor-pointer"
               disabled={submitting}
             >
               Cancel
@@ -1160,14 +1160,14 @@ function TeamManager({ team, setTeam }) {
                 <div className="flex flex-row gap-2">
                   <button
                     onClick={() => handleEdit(m)}
-                    className="px-2 py-1 rounded bg-white/5"
+                    className="px-2 py-1 rounded bg-white/5 cursor-pointer"
                     disabled={deletingId !== null}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => removeMember(m.id)}
-                    className="flex items-center gap-2 px-2 py-1 rounded bg-red-600 text-white"
+                    className="flex items-center gap-2 cursor-pointer px-2 py-1 rounded bg-red-600 text-white"
                     disabled={deletingId !== null}
                   >
                     Delete
@@ -1185,7 +1185,7 @@ function TeamManager({ team, setTeam }) {
                     rel="noreferrer"
                     className="text-sm text-gray-300"
                   >
-                    Insta
+                    Instagram
                   </a>
                 )}
                 {m.socials?.linkedin && (

@@ -105,7 +105,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Line */}
-      <div className="flex flex-row items-center justify-center gap-2 text-center text-white/80 text-xs sm:text-sm mt-12 border-t border-yellow-500/20 pt-6">
+      <div className="flex flex-row items-center justify-center gap-2 text-center text-white/80 text-[10px] sm:text-sm mt-12 border-t border-yellow-500/20 pt-6">
         <Copyright size={15} /> {new Date().getFullYear()} Mukhauta - Developed
         by{" "}
         <a

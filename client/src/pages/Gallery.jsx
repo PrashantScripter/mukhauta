@@ -1,4 +1,4 @@
-
+import EmptyState from "@/components/ui/EmptyState";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 const API = import.meta.env.VITE_SERVER_URL;
@@ -34,25 +34,29 @@ const Gallery = () => {
           Capturing the magic, moments, and madness behind the curtain.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {gallery.map((img) => (
-            <div
-              key={img.id}
-              className="relative group overflow-hidden rounded-xl shadow-lg border border-yellow-600"
-            >
-              <img
-                src={img.ImageUrl}
-                alt={img.title}
-                className="w-full h-64 object-cover transform group-hover:scale-110 transition duration-300 ease-in-out"
-              />
-              <div className="absolute inset-0 bg-black/70 bg-opacity-60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                <p className="text-yellow-400 text-lg font-semibold text-center px-2">
-                  {img.title}
-                </p>
+        {gallery.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {gallery.map((img) => (
+              <div
+                key={img.id}
+                className="relative group overflow-hidden rounded-xl shadow-lg border border-yellow-600"
+              >
+                <img
+                  src={img.ImageUrl}
+                  alt={img.title}
+                  className="w-full h-64 object-cover transform group-hover:scale-110 transition duration-300 ease-in-out"
+                />
+                <div className="absolute inset-0 bg-black/70 bg-opacity-60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                  <p className="text-yellow-400 text-lg font-semibold text-center px-2">
+                    {img.title}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

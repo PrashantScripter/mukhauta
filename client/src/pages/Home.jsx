@@ -2,11 +2,11 @@ import ContactSection from "@/components/ui/Contact";
 import HeroSlideshow from "@/components/ui/HeroSlideShow";
 import TeamSection from "@/components/ui/TeamSection";
 import { Lightbulb, Sparkles, Users } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { MdOutlineExplore } from "react-icons/md";
 
-
 const Home = () => {
+  
   return (
     <div className="">
       <HeroSlideshow height={"h-dvh"}>

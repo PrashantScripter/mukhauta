@@ -4,6 +4,8 @@ import express from "express";
 import nodemailer from "nodemailer";
 import upload from "../middleware/upload.js";
 import cloudinary from "../config/cloudinary.js";
+import uploadDoc from "../middleware/uploadDoc.js";
+import { requireAuth } from "@clerk/express";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -21,15 +23,16 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((err) => {
   if (err) {
-    console.error("Nodemailer transporter verification failed:", err);
+    console.error("Nodemailer transporter verification failed:", err.message, err.stack);
   } else {
     console.log("Nodemailer transporter ready");
   }
 });
 
 // -------------------- Contact Form --------------------
-router.post("/contact", async (req, res) => {
+router.post("/contact", uploadDoc.single("document"), async (req, res) => {
   const { name, email, subject = "Contact Form", message } = req.body;
+  const document = req.file;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required" });
@@ -47,6 +50,15 @@ router.post("/contact", async (req, res) => {
            <div>${String(message).replace(/\n/g, "<br>")}</div>`,
   };
 
+  if (document) {
+    mailOptions.attachments = [
+      {
+        filename: document.originalname,
+        content: document.buffer, // Assumes memory storage
+      },
+    ];
+  }
+
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent:", info.messageId);
@@ -55,8 +67,8 @@ router.post("/contact", async (req, res) => {
       messageId: info.messageId,
     });
   } catch (error) {
-    console.error("Error sending email:", error);
-    return res.status(500).json({ error: "Failed to send email" });
+    console.error("Error sending email:", error.message, error.stack);
+    return res.status(500).json({ error: "Failed to send email", details: error.message });
   }
 });
 
@@ -90,7 +102,7 @@ router.post("/create-member", upload.single("image"), async (req, res) => {
       },
     });
 
-    res.json({ success: true, member: newMember, message:"New member created" });
+    res.json({ success: true, member: newMember, message: "New member created" });
   } catch (error) {
     console.error("Error creating team member:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -143,7 +155,7 @@ router.put("/update-user/:id", upload.single("image"), async (req, res) => {
       },
     });
 
-    res.json({ success: true, member: updatedMember, message:"Member updated" });
+    res.json({ success: true, member: updatedMember, message: "Member updated" });
   } catch (error) {
     console.error("Error updating team member:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -176,6 +188,46 @@ router.delete("/delete-user/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting team member:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// -------------------- Fetch User by Clerk ID --------------------
+router.get('/loggedin/:clerkId', requireAuth(), async (req, res, next) => {
+  try {
+    if (!req.auth) {
+      console.error('req.auth is undefined');
+      return res.status(401).json({ error: 'Authentication middleware failed' });
+    }
+
+    const { clerkId } = req.params;
+
+    // Verify the requesting user matches the clerkId (optional)
+    if (req.auth.userId !== clerkId) {
+      return res.status(403).json({ error: 'Unauthorized: You can only access your own data' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+      select: {
+        id: true,
+        clerkId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.status(200).json({ message: 'User fetched successfully', data: user });
+  } catch (error) {
+    console.error('Error fetching user:', error.message, error.stack);
+    next(error); // Pass to global error handler
   }
 });
 

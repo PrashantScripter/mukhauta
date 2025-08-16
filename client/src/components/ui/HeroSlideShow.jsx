@@ -4,9 +4,12 @@ import mukhota1 from "../../assets/mukhota1.jpg";
 import mukhota2 from "../../assets/mukhota2.jpg";
 import mukhota3 from "../../assets/mukhota3.jpg";
 import mukhota4 from "../../assets/mukhota4.jpg";
-import mukhota5 from "../../assets/mukhota5.jpg";
+import mukhota6 from "../../assets/mukhota6.jpg";
+import mukhota7 from "../../assets/mukhota7.jpg";
+import mukhota8 from "../../assets/mukhota8.jpg";
+import mukhota9 from "../../assets/mukhota9.jpg";
 
-const images = [mukhota1, mukhota2, mukhota3, mukhota4, mukhota5];
+const images = [mukhota1, mukhota2, mukhota3, mukhota4, mukhota6, mukhota7, mukhota8, mukhota9];
 
 export default function HeroSlideshow({ children, height = "h-dvh" }) {
   const [current, setCurrent] = useState(0);

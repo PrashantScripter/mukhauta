@@ -1,3 +1,4 @@
+import EmptyState from "@/components/ui/EmptyState";
 import axios from "axios";
 import { CircleX, Rss } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -37,33 +38,39 @@ const Blog = () => {
         scenes.
       </p>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className="bg-zinc-950 border border-yellow-500/30 rounded-xl overflow-hidden shadow-lg hover:shadow-yellow-500/20 transition-all duration-300 cursor-pointer"
-            onClick={() => setSelectedBlog(blog)}
-          >
-            <img
-              src={blog.imageUrl}
-              alt={blog.title}
-              className="h-48 w-full object-cover"
-            />
-            <div className="p-6 space-y-3">
-              <p className="text-sm text-yellow-400 font-medium">
-                {new Date(blog.createdAt).toLocaleString()}
-              </p>
-              <h3 className="text-xl font-semibold hover:underline">
-                {blog.title}
-              </h3>
-              <p className="text-gray-300 text-sm line-clamp-3">{blog.content}</p>
-              <p className="text-sm italic text-yellow-200 mt-2">
-                — {blog.author}
-              </p>
+      {blogs.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {blogs.map((blog) => (
+            <div
+              key={blog.id}
+              className="bg-zinc-950 border border-yellow-500/30 rounded-xl overflow-hidden shadow-lg hover:shadow-yellow-500/20 transition-all duration-300 cursor-pointer"
+              onClick={() => setSelectedBlog(blog)}
+            >
+              <img
+                src={blog.imageUrl}
+                alt={blog.title}
+                className="h-48 w-full object-cover"
+              />
+              <div className="p-6 space-y-3">
+                <p className="text-sm text-yellow-400 font-medium">
+                  {new Date(blog.createdAt).toLocaleString()}
+                </p>
+                <h3 className="text-xl font-semibold hover:underline">
+                  {blog.title}
+                </h3>
+                <p className="text-gray-300 text-sm line-clamp-3">
+                  {blog.content}
+                </p>
+                <p className="text-sm italic text-yellow-200 mt-2">
+                  — {blog.author}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* read blogs popup */}
       {selectedBlog && (

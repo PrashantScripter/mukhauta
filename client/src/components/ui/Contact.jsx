@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { Button } from "./button";
 import toast, { Toaster } from "react-hot-toast";
 
+const API = import.meta.env.VITE_SERVER_URL;
+
+
 const ContactSection = () => {
   const [form, setForm] = useState({
     name: "",
@@ -12,23 +15,44 @@ const ContactSection = () => {
     message: "",
   });
 
+  const [file, setFile] = useState(null); // New state for the file
   const [sending, setSending] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]); // Store the selected file
+  };
+
   const handleSubmit = async (e) => {
-    setSending(true);
     e.preventDefault();
+    setSending(true);
+
+    const formData = new FormData(); // Use FormData for multipart upload
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("subject", form.subject);
+    formData.append("message", form.message);
+    if (file) {
+      formData.append("document", file); // Append the file if selected
+    }
+
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user/contact",
-        form
+        `${API}/api/user/contact`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Required for file uploads
+          },
+        }
       );
       console.log("Message sent successfully!");
       toast.success("Message sent successfully!");
       setForm({ name: "", email: "", subject: "", message: "" });
+      setFile(null); // Reset file input
     } catch (error) {
       console.log("Failed to send message. Please try again.", error);
       toast.error("Failed to send message. Please try again later!.");
@@ -92,6 +116,15 @@ const ContactSection = () => {
             value={form.message}
             onChange={handleChange}
             className="bg-black border border-yellow-500/50 text-white px-4 py-3 rounded-md w-full mb-6 resize-none focus:outline-none focus:ring-1 focus:ring-yellow-500"
+          />
+
+          {/* New file input */}
+          <input
+            type="file"
+            name="document"
+            accept=".pdf,.doc,.docx" // Restrict to PDF and DOC files (optional)
+            onChange={handleFileChange}
+            className="bg-black border cursor-pointer border-yellow-600/50 text-white px-4 py-3 rounded-md w-full mb-6 focus:outline-none focus:ring-1 focus:ring-yellow-500"
           />
 
           {sending ? (

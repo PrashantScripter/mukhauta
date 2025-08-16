@@ -13,7 +13,7 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
-// ✅ 1) CORS setup for frontend
+// 1) CORS setup for frontend
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -22,11 +22,7 @@ app.use(
   })
 );
 
-/**
- * ✅ 2) Clerk Webhook (must be before express.json)
- * - Reads raw body for signature verification
- * - Fetches full user profile from Clerk
- */
+// 2) Webhook handler for Clerk
 app.post(
   "/api/webhooks/clerk",
   express.raw({ type: "application/json" }),
@@ -49,9 +45,22 @@ app.post(
         const imageUrl = u.imageUrl ?? null;
         const role = u.publicMetadata?.role ?? "user";
 
+        // Check if user exists to preserve existing role
+        const existingUser = await prisma.user.findUnique({
+          where: { clerkId },
+        });
+
         await prisma.user.upsert({
           where: { clerkId },
-          update: { email, firstName, lastName, imageUrl, role, deleted: false },
+          update: {
+            email,
+            firstName,
+            lastName,
+            imageUrl,
+            // Only update role if it's a new user or explicitly set in Clerk
+            role: existingUser ? existingUser.role : role,
+            deleted: false,
+          },
           create: { clerkId, email, firstName, lastName, imageUrl, role },
         });
 
@@ -69,18 +78,17 @@ app.post(
 
       res.status(200).send("ok");
     } catch (err) {
-      console.error("❌ Webhook error", err);
-      res.status(400).send("webhook verification failed");
+      console.error("❌ Webhook error:", err);
+      res.status(400).send("Webhook verification failed");
     }
   }
 );
 
-
-// ✅ 3) Body parsers AFTER webhook
+// 3) Body parsers AFTER webhook
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ 4) Protect all routes except webhook with Clerk
+// 4) Clerk middleware for authentication
 app.use(
   clerkMiddleware({
     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
@@ -88,9 +96,7 @@ app.use(
   })
 );
 
-/**
- * ✅ 5) Manual sync route for logged-in user
- */
+// 5) Manual sync route for logged-in user
 app.get("/api/sync/me", async (req, res) => {
   try {
     const auth = getAuth(req);
@@ -105,30 +111,57 @@ app.get("/api/sync/me", async (req, res) => {
     const firstName = u.firstName ?? null;
     const lastName = u.lastName ?? null;
     const imageUrl = u.imageUrl ?? null;
-    const role = u.publicMetadata?.role ?? "user";
+    const clerkRole = u.publicMetadata?.role ?? "user";
+
+    // Fetch existing user to preserve role
+    const existingUser = await prisma.user.findUnique({
+      where: { clerkId },
+    });
 
     await prisma.user.upsert({
       where: { clerkId },
-      update: { email, firstName, lastName, imageUrl, role, deleted: false },
-      create: { clerkId, email, firstName, lastName, imageUrl, role },
+      update: {
+        email,
+        firstName,
+        lastName,
+        imageUrl,
+        // Preserve existing role if user exists, otherwise use Clerk's role
+        role: existingUser ? existingUser.role : clerkRole,
+        deleted: false,
+      },
+      create: {
+        clerkId,
+        email,
+        firstName,
+        lastName,
+        imageUrl,
+        role: clerkRole,
+      },
     });
 
     res.json({ ok: true });
   } catch (e) {
-    console.error("sync/me error", e);
-    res.status(500).json({ error: "Internal error" });
+    console.error("❌ sync/me error:", e);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// ✅ 6) Your app routes
+// 6) App routes
 app.use("/api/user", UserRoutes);
 app.use("/api/admin", AdminRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Working..");
+  res.send("Working...");
 });
 
-// ✅ 7) Start server
+// 7) Start server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
+});
+
+// 8) Graceful shutdown
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+  await prisma.$disconnect();
+  process.exit(0);
 });
