@@ -36,7 +36,6 @@ const TeamSection = () => {
         </p>
 
         <div className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          
           <Link to={"/team"} className="absolute right-0 -bottom-12">
             <Button className="bg-yellow-500 cursor-pointer hover:border border-yellow-500 text-black hover:text-white">
               View all members
@@ -59,7 +58,7 @@ const TeamSection = () => {
               <p className="text-sm text-yellow-600 font-medium mb-2">
                 {member.role}
               </p>
-              <p className="text-sm text-white/80 text-center mb-4">
+              <p className="text-sm text-white/80 text-center mb-4 line-clamp-3 w-full">
                 {member.description}
               </p>
 
