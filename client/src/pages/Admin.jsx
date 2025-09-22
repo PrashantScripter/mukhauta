@@ -66,7 +66,7 @@ export default function AdminPage() {
   return (
     <div className="bg-black min-h-screen pt-20 pb-10 px-6 md:px-20 text-white">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="w-[100%] sm:max-w-7xl mx-auto px-0 py-10">
         <header className="mb-8">
           <h1 className="text-3xl font-bold">Mukhauta Admin</h1>
           <p className="text-sm text-gray-300">
@@ -99,7 +99,7 @@ export default function AdminPage() {
             </nav>
           </aside>
 
-          <main className="col-span-1 md:col-span-3 bg-gradient-to-br from-red-900 to-black rounded-xl p-6 border border-yellow-700/20">
+          <main className="col-span-1 md:col-span-3 bg-gradient-to-br from-red-900 to-black rounded-xl p-4 sm:p-6 border border-yellow-700/20">
             {activeTab === "dashboard" && (
               <Dashboard
                 blogs={blogs}
@@ -846,7 +846,7 @@ function NoticesManager({ notices, setNotices }) {
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-gray-300">{n.description}</p>
+              <p className="text-sm text-gray-300 whitespace-pre-line">{n.description}</p>
               <p className="text-xs text-gray-400 mt-1">
                 {new Date(n.createdAt).toLocaleString()}
               </p>
@@ -1136,7 +1136,7 @@ function TeamManager({ team, setTeam }) {
               key={m.id}
               className="bg-zinc-950 p-3 rounded border border-yellow-700/10"
             >
-              <div className="flex flex-row items-center gap-3">
+              <div className="flex flex-col justify-center sm:flex-row items-center gap-3">
                 <div className="w-20 h-20 bg-gray-800 rounded-full overflow-hidden">
                   {m.imageUrl ? (
                     <img
@@ -1150,7 +1150,7 @@ function TeamManager({ team, setTeam }) {
                     </div>
                   )}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-center">
                   <p className="font-semibold">{m.name}</p>
                   <p className="text-sm text-yellow-400">{m.role}</p>
                   <p className="text-xs text-gray-300 mt-1 line-clamp-3">

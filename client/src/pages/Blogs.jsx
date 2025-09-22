@@ -1,6 +1,6 @@
 import EmptyState from "@/components/ui/EmptyState";
 import axios from "axios";
-import { CircleX, Rss } from "lucide-react";
+import { CircleX, Loader2Icon, Rss } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { TfiWrite } from "react-icons/tfi";
 
@@ -9,12 +9,14 @@ const API = import.meta.env.VITE_SERVER_URL;
 const Blog = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     fetchBlogs();
   }, []);
 
   const fetchBlogs = async () => {
+    setFetching(true);
     try {
       const res = await axios.get(`${API}/api/admin/all-blogs`);
       if (res.data.success) {
@@ -23,6 +25,8 @@ const Blog = () => {
       }
     } catch (err) {
       console.error("Failed to load blogs:", err);
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -38,7 +42,9 @@ const Blog = () => {
         scenes.
       </p>
 
-      {blogs.length === 0 ? (
+      {fetching ? (
+        <Loader2Icon className="animate-spin flex mx-auto text-white size-14" />
+      ) : blogs.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">

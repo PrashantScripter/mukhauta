@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Instagram, Linkedin, Facebook } from "lucide-react";
+import { Instagram, Linkedin, Facebook, Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -8,13 +8,14 @@ const API = import.meta.env.VITE_SERVER_URL;
 
 const Team = () => {
   const [teamMembers, setTeamMembers] = useState([]);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     fetchTeam();
   }, []);
 
   const fetchTeam = async () => {
-    // setLoading(true);
+    setFetching(true);
     try {
       const res = await axios.get(`${API}/api/user/all-members`);
       setTeamMembers(res.data.members);
@@ -23,7 +24,7 @@ const Team = () => {
       console.error("Failed to fetch team", err);
       alert("Failed to fetch team. Check console for details.");
     } finally {
-      // setLoading(false);
+      setFetching(false);
     }
   };
 
@@ -40,7 +41,9 @@ const Team = () => {
           Meet the passionate minds behind every curtain call.
         </p>
 
-        {teamMembers.length === 0 ? (
+        {fetching ? (
+          <Loader2Icon className="animate-spin flex mx-auto text-white size-14" />
+        ) : teamMembers.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">

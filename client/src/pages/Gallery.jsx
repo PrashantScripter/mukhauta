@@ -1,10 +1,12 @@
 import EmptyState from "@/components/ui/EmptyState";
 import axios from "axios";
+import { Loader2Icon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 const API = import.meta.env.VITE_SERVER_URL;
 
 const Gallery = () => {
   const [gallery, setGallery] = useState([]);
+  const [fetching, setFetching] = useState(false);
 
   // if parent did not provide gallery, try to load initial from backend
   useEffect(() => {
@@ -12,6 +14,7 @@ const Gallery = () => {
   }, []);
 
   const fetchGallery = async () => {
+    setFetching(true);
     try {
       const res = await axios.get(`${API}/api/admin/allGallery`);
       if (res?.data?.data) {
@@ -22,6 +25,8 @@ const Gallery = () => {
       }
     } catch (err) {
       console.error("Failed to load gallery:", err);
+    } finally {
+      setFetching(false);
     }
   };
   return (
@@ -34,7 +39,9 @@ const Gallery = () => {
           Capturing the magic, moments, and madness behind the curtain.
         </p>
 
-        {gallery.length === 0 ? (
+        {fetching ? (
+          <Loader2Icon className="animate-spin flex mx-auto text-white size-14" />
+        ) : gallery.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

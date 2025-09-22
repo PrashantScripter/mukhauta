@@ -1,11 +1,21 @@
 // components/Footer.jsx
 
 import React from "react";
-import { Instagram, Facebook, Mail, Phone, MapPin, Copyright } from "lucide-react";
-import { Link } from "react-router-dom";
-
+import {
+  Instagram,
+  Facebook,
+  Mail,
+  Phone,
+  MapPin,
+  Copyright,
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 const Footer = () => {
+  const location = useLocation();
+  const currentUrl =
+    window.location.origin + location.pathname + location.search;
   return (
     <footer className="bg-zinc-950 text-white p-10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -33,11 +43,25 @@ const Footer = () => {
             Quick Links
           </h3>
           <ul className="space-y-2 text-sm text-gray-300">
-            <li>
-              <a href="#about" className="hover:text-yellow-400 transition">
-                About Us
-              </a>
-            </li>
+            {currentUrl === CLIENT_URL ? (
+              <>
+                <li>
+                  <a href="#about" className="hover:text-yellow-400 transition">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contact"
+                    className="hover:text-yellow-400 transition"
+                  >
+                    Contact Us
+                  </a>
+                </li>
+              </>
+            ) : (
+              ""
+            )}
             <li>
               <Link
                 to={"/notices"}
@@ -58,11 +82,6 @@ const Footer = () => {
               <Link to={"/team"} className="hover:text-yellow-400 transition">
                 Our Team
               </Link>
-            </li>
-            <li>
-              <a href="#contact" className="hover:text-yellow-400 transition">
-                Contact Us
-              </a>
             </li>
           </ul>
         </div>

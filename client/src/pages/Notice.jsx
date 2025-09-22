@@ -1,23 +1,27 @@
 import EmptyState from "@/components/ui/EmptyState";
 import axios from "axios";
+import { Loader2Icon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { GrAnnounce } from "react-icons/gr";
 const API = import.meta.env.VITE_SERVER_URL;
 
 const Notices = () => {
   const [notices, setNotices] = useState([]);
-
+  const [fetching, setFetching] = useState(false);
   useEffect(() => {
     getNotices();
   }, []);
 
   const getNotices = async () => {
+    setFetching(true);
     try {
       const res = await axios.get(`${API}/api/admin/allNotices`);
       setNotices(res.data.notices);
       console.log(res);
     } catch (error) {
       console.error(error);
+    } finally {
+      setFetching(false);
     }
   };
   return (
@@ -26,7 +30,9 @@ const Notices = () => {
         <GrAnnounce className="text-white" /> Notices
       </h2>
 
-      {notices.length === 0 ? (
+      {fetching ? (
+        <Loader2Icon className="animate-spin flex mx-auto text-white size-14" />
+      ) : notices.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="max-w-5xl mx-auto space-y-6">
@@ -39,7 +45,9 @@ const Notices = () => {
                 {new Date(notice.createdAt).toLocaleString()}
               </div>
               <h3 className="text-xl font-semibold mb-2">{notice.title}</h3>
-              <p className="text-gray-300">{notice.description}</p>
+              <p className="text-gray-300  whitespace-pre-line">
+                {notice.description}
+              </p>
             </div>
           ))}
         </div>

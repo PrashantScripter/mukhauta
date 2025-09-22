@@ -33,10 +33,13 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 const API = import.meta.env.VITE_SERVER_URL;
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
+import useUserStore from "@/store/userStore";
 
 const Header = () => {
   const { getToken, isSignedIn, userId } = useAuth();
-  const [loggedInUser, setloggedInUser] = useState({});
+  // const [loggedInUser, setloggedInUser] = useState({});
+  const setLoggedInUser = useUserStore((state) => state.setLoggedInUser);
+  const role = useUserStore((state) => state.loggedInUser?.role);
 
   const location = useLocation();
   const currentUrl =
@@ -70,7 +73,7 @@ const Header = () => {
             }
           );
 
-          setloggedInUser(response.data.data);
+          setLoggedInUser(response.data.data);
         } catch (error) {
           console.error(
             "Failed to fetch user data:",
@@ -80,7 +83,7 @@ const Header = () => {
       };
       fetchUser();
     }
-  }, [isSignedIn, userId]);
+  }, [isSignedIn, userId, setLoggedInUser]);
 
   return (
     <header className="flex flex-row cursor-pointer z-50 justify-between items-center p-4 lg:px-10 fixed top-0 w-dvw backdrop-blur-xl">
@@ -132,7 +135,7 @@ const Header = () => {
             ""
           )}
 
-          {isSignedIn && loggedInUser.role === "admin" ? (
+          {isSignedIn && role === 'admin'  ? (
             <Link to={"/admin"} className="relative text-white group">
               Admin
               <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
@@ -213,19 +216,17 @@ const Header = () => {
                     ""
                   )}
 
-                  {isSignedIn && loggedInUser.role === "admin" ? (
+                  {isSignedIn && role === 'admin'   ? (
                     <MenubarItem>
-                    <User />
-                    <Link to={"/admin"} className="relative text-white group">
-                      Admin
-                      <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
-                    </Link>
-                  </MenubarItem>
+                      <User />
+                      <Link to={"/admin"} className="relative text-white group">
+                        Admin
+                        <span className="pointer-events-none absolute left-1/2 -bottom-1 h-[2px] w-full -translate-x-1/2 origin-center scale-x-0 bg-yellow-500 transition-transform duration-300 group-hover:scale-x-100"></span>
+                      </Link>
+                    </MenubarItem>
                   ) : (
                     ""
                   )}
-
-                  
                 </MenubarContent>
               </MenubarMenu>
             </Menubar>
