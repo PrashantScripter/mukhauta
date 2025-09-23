@@ -180,9 +180,9 @@ const Home = () => {
 
       <ContactSection />
 
-      <div className="bg-zinc-900 text-white px-2 rounded-2xl fixed bottom-2 right-2 flex flex-row items-center justify-center border border-white/50">
-        <img className="w-9 h-9" src="./cc_logo_transparent.png" alt="" />
-        <p className="text-xs">Developed by Code Catalyst</p>
+      <div className="bg-zinc-900 text-white py-1 px-2 sm:py-0 rounded-2xl fixed bottom-2 right-2 flex flex-row items-center justify-center border border-white/50">
+        <img className="w-6 h-6 sm:w-9 sm:h-9" src="./cc_logo_transparent.png" alt="" />
+        <p className="text-[10px] sm:text-xs">Developed by Code Catalyst</p>
       </div>
     </div>
   );
