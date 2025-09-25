@@ -134,3 +134,17 @@
   filter: invert(74%) sepia(72%) saturate(565%) hue-rotate(359deg) brightness(96%) contrast(92%);
   cursor: pointer;
 }
+
+/* 🔥 Gradient Slide Animation (added) */
+@keyframes gradient-slide {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-gradient-slide {
+  animation: gradient-slide 5s linear infinite;
+}

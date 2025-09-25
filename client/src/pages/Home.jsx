@@ -180,15 +180,33 @@ const Home = () => {
 
       <ContactSection />
 
-      <div className="bg-transparent backdrop-blur-2xl py-1 px-2 sm:py-0 rounded-md fixed bottom-2 right-2 flex flex-row items-center justify-center border border-white/30">
-        <img
-          className="hover:animate-spin cursor-pointer w-6 h-6 sm:w-9 sm:h-9"
-          src="./cc_logo_transparent.png"
-          alt=""
-        />
-        <p className="text-[10px] text-yellow-400 sm:text-xs">Developed by Code Catalyst</p>
-      </div>
-    </div>
+    <div className="fixed bottom-3 right-3">
+  <a
+    href="https://code-catalyst.pages.dev/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center gap-1.5 rounded-md border border-purple-400/40 bg-gradient-to-r from-pink-400/20 via-transparent to-purple-400/20 backdrop-blur-md px-3 py-1.5 shadow-lg hover:shadow-pink-400/40 transition-all duration-300 hover:scale-105 group"
+  >
+    <p
+      className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
+                 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
+                 bg-[length:200%_100%] bg-clip-text text-transparent 
+                 animate-gradient-slide"
+    >
+      Developed by
+      <img
+        className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer transition-transform duration-500 group-hover:rotate-360"
+        src="./cc_logo_transparent.png"
+        alt="Code Catalyst Logo"
+      />
+      <span className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
+                 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
+                 bg-[length:200%_100%] bg-clip-text text-transparent 
+                 animate-gradient-slide">Code Catalyst</span>
+    </p>
+  </a>
+</div>
+    </div>  
   );
 };
 
