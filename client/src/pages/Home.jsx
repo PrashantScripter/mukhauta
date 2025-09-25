@@ -180,9 +180,13 @@ const Home = () => {
 
       <ContactSection />
 
-      <div className="bg-zinc-900 text-white py-1 px-2 sm:py-0 rounded-2xl fixed bottom-2 right-2 flex flex-row items-center justify-center border border-white/50">
-        <img className="w-6 h-6 sm:w-9 sm:h-9" src="./cc_logo_transparent.png" alt="" />
-        <p className="text-[10px] sm:text-xs">Developed by Code Catalyst</p>
+      <div className="bg-transparent backdrop-blur-2xl py-1 px-2 sm:py-0 rounded-md fixed bottom-2 right-2 flex flex-row items-center justify-center border border-white/30">
+        <img
+          className="hover:animate-spin cursor-pointer w-6 h-6 sm:w-9 sm:h-9"
+          src="./cc_logo_transparent.png"
+          alt=""
+        />
+        <p className="text-[10px] text-yellow-400 sm:text-xs">Developed by Code Catalyst</p>
       </div>
     </div>
   );
