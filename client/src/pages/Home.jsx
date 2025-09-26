@@ -6,7 +6,6 @@ import React, { useEffect } from "react";
 import { MdOutlineExplore } from "react-icons/md";
 
 const Home = () => {
-  
   return (
     <div className="">
       <HeroSlideshow height={"h-dvh"}>
@@ -180,33 +179,37 @@ const Home = () => {
 
       <ContactSection />
 
-    <div className="fixed bottom-3 right-3">
-  <a
-    href="https://code-catalyst.pages.dev/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center gap-1.5 rounded-md border border-purple-400/40 bg-gradient-to-r from-pink-400/20 via-transparent to-purple-400/20 backdrop-blur-md px-3 py-1.5 shadow-lg hover:shadow-pink-400/40 transition-all duration-300 hover:scale-105 group"
-  >
-    <p
-      className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
+      <div className="fixed bottom-3 right-3">
+        <a
+          href="https://code-catalyst.pages.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-md border border-purple-400/40 bg-gradient-to-r from-pink-400/20 via-transparent to-purple-400/20 backdrop-blur-md px-3 py-1.5 shadow-lg hover:shadow-pink-400/40 transition-all duration-300 hover:scale-105 group"
+        >
+          <p
+            className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
                  bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
                  bg-[length:200%_100%] bg-clip-text text-transparent 
                  animate-gradient-slide"
-    >
-      Developed by
-      <img
-        className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer transition-transform duration-500 group-hover:rotate-360"
-        src="./cc_logo_transparent.png"
-        alt="Code Catalyst Logo"
-      />
-      <span className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
+          >
+            Developed by
+            <img
+              className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer transition-transform duration-500 group-hover:rotate-360"
+              src="./cc_logo_transparent.png"
+              alt="Code Catalyst Logo"
+            />
+            <span
+              className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
                  bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
                  bg-[length:200%_100%] bg-clip-text text-transparent 
-                 animate-gradient-slide">Code Catalyst</span>
-    </p>
-  </a>
-</div>
-    </div>  
+                 animate-gradient-slide"
+            >
+              Code Catalyst
+            </span>
+          </p>
+        </a>
+      </div>
+    </div>
   );
 };
 
