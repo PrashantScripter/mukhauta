@@ -184,26 +184,26 @@ const Home = () => {
           href="https://code-catalyst.pages.dev/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-md border border-purple-400/40 bg-gradient-to-r from-pink-400/20 via-transparent to-purple-400/20 backdrop-blur-md px-3 py-1.5 shadow-lg hover:shadow-pink-400/40 transition-all duration-300 hover:scale-105 group"
+          className="group relative flex items-center gap-1.5 justify-center 
+               bg-gradient-to-r from-pink-600/40 via-transparent to-purple-600/40 
+               bg-[length:200%_100%] animate-gradient-slide
+               text-white font-semibold px-3 py-1.5 rounded-md 
+               border border-purple-600/40 
+               backdrop-blur-md shadow-lg overflow-hidden
+               transition-all duration-500   ease-out transform 
+               hover:scale-[1.02] hover:shadow-2xl"
         >
-          <p
-            className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
-                 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
-                 bg-[length:200%_100%] bg-clip-text text-transparent 
-                 animate-gradient-slide"
-          >
+          {/* Hover overlay effect */}
+          <div className="absolute inset-0 bg-pink/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+          <p className="relative z-10 flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide">
             Developed by
             <img
               className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer transition-transform duration-500 group-hover:rotate-360"
               src="./cc_logo_transparent.png"
               alt="Code Catalyst Logo"
             />
-            <span
-              className="flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide 
-                 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 
-                 bg-[length:200%_100%] bg-clip-text text-transparent 
-                 animate-gradient-slide"
-            >
+            <span className="text-[11px] sm:text-sm font-extrabold tracking-wide">
               Code Catalyst
             </span>
           </p>

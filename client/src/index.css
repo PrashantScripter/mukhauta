@@ -119,14 +119,14 @@
     font-optical-sizing: auto;
     font-style: normal;
     font-weight: 300;
-    scroll-behavior: smooth
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-.logo-style{
+.logo-style {
   font-family: "Edu NSW ACT Cursive", cursive;
 }
 
@@ -135,16 +135,20 @@
   cursor: pointer;
 }
 
-/* 🔥 Gradient Slide Animation (added) */
+/* 🔥 Gradient Slide Animation (continuous) */
 @keyframes gradient-slide {
   0% {
-    background-position: 200% 0;
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 70%;
   }
   100% {
-    background-position: -200% 0;
+    background-position: 0% 70%;
   }
 }
 
 .animate-gradient-slide {
-  animation: gradient-slide 5s linear infinite;
+  animation: gradient-slide 6s linear infinite;
+  background-size: 200% 100%;
 }
