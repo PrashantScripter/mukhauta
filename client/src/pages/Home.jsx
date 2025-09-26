@@ -186,7 +186,7 @@ const Home = () => {
     target="_blank"
     rel="noopener noreferrer"
     className="group relative flex items-center gap-1.5 justify-center 
-               bg-gradient-to-r from-pink-400/20 via-transparent to-purple-600/40 
+               bg-gradient-to-r from-pink-600/40 via-transparent to-purple-600/40 
                bg-[length:200%_100%] animate-gradient-slide
                text-white font-semibold px-3 py-1.5 rounded-md 
                border border-purple-600/40 
