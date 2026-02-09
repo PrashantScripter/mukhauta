@@ -128,11 +128,11 @@ const Footer = () => {
         <Copyright size={15} /> {new Date().getFullYear()} Mukhauta - Developed
         by{" "}
         <a
-          href="https://code-catalyst.pages.dev/"
+          href="https://origin.ct.ws/"
           target="_blank"
           className="hover:underline underline-offset-4 text-yellow-500"
         >
-          Code Catalyst
+          ORIGIN
         </a>
       </div>
     </footer>

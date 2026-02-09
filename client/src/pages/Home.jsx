@@ -181,7 +181,7 @@ const Home = () => {
 
       <div className="fixed bottom-3 right-3">
         <a
-          href="https://code-catalyst.pages.dev/"
+          href="https://origin.ct.ws/"
           target="_blank"
           rel="noopener noreferrer"
           className="group relative flex items-center gap-1.5 justify-center 
@@ -199,12 +199,12 @@ const Home = () => {
           <p className="relative z-10 flex items-center gap-1.5 text-[11px] sm:text-sm font-extrabold tracking-wide">
             Developed by
             <img
-              className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer transition-transform duration-500 group-hover:rotate-360"
-              src="./cc_logo_transparent.png"
-              alt="Code Catalyst Logo"
+              className="w-5 h-5 sm:w-6 sm:h-6 rounded-full cursor-pointer transition-transform duration-500 group-hover:rotate-360"
+              src="./origin.jpeg"
+              alt="ORIGIN Logo"
             />
             <span className="text-[11px] sm:text-sm font-extrabold tracking-wide">
-              Code Catalyst
+              ORIGIN 
             </span>
           </p>
         </a>
